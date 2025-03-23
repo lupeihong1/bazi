@@ -125,38 +125,34 @@ const TIME_CORRECTION = {
 export function calculateSolarTime(date, longitude, latitude, useSolarTime = false) {
   if (!useSolarTime) return new Date(date);
 
-  // 克隆日期避免污染输入
   const baseDate = new Date(date);
   const year = baseDate.getFullYear();
   const month = baseDate.getMonth() + 1;
   const day = baseDate.getDate();
   const totalMinutes = baseDate.getHours() * 60 + baseDate.getMinutes() + baseDate.getSeconds() / 60;
 
-  // 1. 经度修正（关键修正方向）
-  // 经度差 = 120° - 当地经度
-  // 时差 = 经度差 × 4分钟
-  const longitudeDiff = 120 - longitude;
-  const longitudeCorrection = -longitudeDiff * 4; // 东经小于120度需补偿时间（负值）
-  console.log('经度差:', longitudeDiff.toFixed(3), '度');
-  console.log('经度修正:', longitudeCorrection.toFixed(2), '分钟');
-
-  // 2. 获取日期时差修正（从预定义表中获取，并修正符号）
-  const timeDiff = -(TIME_CORRECTION[month]?.[day] || 0); // 修正符号
+  // 1. 经度修正
+  // 直接计算与东八区（120°）的经度差
+  const longitudeDiff = longitude - 120;
+  const longitudeCorrection = longitudeDiff * 4;
+  
+  // 2. 获取日期时差修正
+  const timeDiff = TIME_CORRECTION[month]?.[day] || 0;
   console.log('日期时差修正:', timeDiff.toFixed(2), '分钟');
 
   // 3. 总修正值并应用
   const totalCorrection = longitudeCorrection + timeDiff;
   let correctedMinutes = totalMinutes + totalCorrection;
 
-  // 4. 处理日期进位（精确算法）
-  correctedMinutes = ((correctedMinutes % 1440) + 1440) % 1440; // 处理负值
-  const resultHour = Math.floor(correctedMinutes / 60);
-  const resultMinute = Math.floor(correctedMinutes % 60);
-  const resultSecond = Math.round((correctedMinutes % 1) * 60);
+  // 4. 处理日期跨越
+  while (correctedMinutes < 0) {
+    correctedMinutes += 1440; // 如果是负数，加一天的分钟数
+  }
+  correctedMinutes = correctedMinutes % 1440;
 
   // 5. 生成结果
   const solarTime = new Date(baseDate);
-  solarTime.setHours(resultHour, resultMinute, resultSecond);
+  solarTime.setHours(Math.floor(correctedMinutes / 60), Math.floor(correctedMinutes % 60), Math.round((correctedMinutes % 1) * 60));
   return solarTime;
 }
 

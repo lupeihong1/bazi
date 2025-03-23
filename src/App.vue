@@ -17,20 +17,6 @@ const cityTab = ref("domestic");
 const selectedProvince = ref("");
 const districts = ref([]);
 
-// 添加五行属性映射
-const FIVE_ELEMENTS = {
-  '甲': '木', '乙': '木',
-  '丙': '火', '丁': '火',
-  '戊': '土', '己': '土',
-  '庚': '金', '辛': '金',
-  '壬': '水', '癸': '水',
-  '寅': '木', '卯': '木',
-  '巳': '火', '午': '火',
-  '辰': '土', '戌': '土', '丑': '土', '未': '土',
-  '申': '金', '酉': '金',
-  '亥': '水', '子': '水'
-};
-
 // 获取所有城市并按省份分组
 const groupedCities = computed(() => {
   const allCities = getAllCities();
@@ -385,17 +371,13 @@ function getStrengthClass(strength) {
                 <div class="strength-judgment">
                   <div class="judgment-item">
                     <span class="label">日主：</span>
-                    <span class="value">{{ result.日柱[0] }}{{ FIVE_ELEMENTS[result.日柱[0]] }}</span>
+                    <span class="value">{{ result.日柱[0] }}{{ result.身强身弱.details.dayElement }}</span>
                   </div>
                   <div class="judgment-item">
                     <span class="label">总体判断：</span>
                     <span :class="['value', getStrengthClass(result.身强身弱.strength)]">
                       {{ result.身强身弱.strength }}
                     </span>
-                  </div>
-                  <div class="judgment-item">
-                    <span class="label">总力量：</span>
-                    <span class="value">{{ result.身强身弱.details.totalStrength }}%</span>
                   </div>
                   <div class="judgment-item">
                     <span class="label">得分：</span>
@@ -415,21 +397,7 @@ function getStrengthClass(strength) {
                          class="weight-item">
                       <span class="weight-label">{{ key }}：</span>
                       <span :class="['weight-value', getWeightClass(parseFloat(value))]">
-                        {{ value }}%
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="strength-elements">
-                  <h4>五行属性分布</h4>
-                  <div class="elements-grid">
-                    <div v-for="(value, key) in result.身强身弱.details.elements" 
-                         :key="key" 
-                         class="element-item">
-                      <span class="element-label">{{ key }}：</span>
-                      <span class="element-value">
-                        {{ value }}%
+                        {{ value }}
                       </span>
                     </div>
                   </div>
@@ -445,274 +413,394 @@ function getStrengthClass(strength) {
 
 <style scoped>
 .container {
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 30px 20px;
+  background: #f5f7fa;
 }
 
 h2, h3 {
-  color: #333;
+  color: #2c3e50;
   text-align: center;
+  margin-bottom: 25px;
+  font-weight: 600;
 }
 
 .current-bazi, .calculator {
-  margin: 20px 0;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  margin: 25px 0;
+  padding: 25px;
+  border: none;
+  border-radius: 12px;
   background: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
 }
 
 .bazi-result {
   display: flex;
-  justify-content: space-around;
-  margin: 20px 0;
+  justify-content: center;
+  gap: 20px;
+  margin: 25px 0;
   flex-wrap: wrap;
-  gap: 10px;
 }
 
 .pillar {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 15px;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  min-width: 100px;
-  background: #f8f9fa;
+  padding: 20px;
+  border: 1px solid #eef2f7;
+  border-radius: 12px;
+  min-width: 120px;
+  background: #ffffff;
+  transition: all 0.3s ease;
+}
+
+.pillar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .label {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 8px;
+  font-size: 15px;
+  color: #64748b;
+  margin-bottom: 10px;
+  font-weight: 500;
 }
 
 .value {
-  font-size: 24px;
-  font-weight: bold;
-  color: #333;
+  font-size: 28px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.solar-time-info {
+  margin: 20px 0;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 16px;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.location-info {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.8;
+}
+
+.strength-info {
+  margin: 25px 0;
+  padding: 25px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.strength-analysis {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 25px;
+  margin-top: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.strength-judgment {
+  margin-bottom: 25px;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 10px;
+}
+
+.judgment-item {
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.judgment-item .label {
+  font-weight: 600;
+  min-width: 100px;
+  color: #475569;
+}
+
+.judgment-item .value {
+  color: #1e293b;
+  font-size: 16px;
+}
+
+.judgment-item .score {
+  font-size: 18px;
+  font-weight: 600;
+  color: #3b82f6;
+}
+
+.strength-weights {
+  margin-top: 25px;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 12px;
+}
+
+.strength-weights h4 {
+  margin: 0 0 20px 0;
+  color: #1e293b;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.weights-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 15px;
+}
+
+.weight-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.weight-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.weight-label {
+  font-size: 14px;
+  color: #64748b;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.weight-value {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.weight-value.positive {
+  color: #22c55e;
+}
+
+.weight-value.negative {
+  color: #ef4444;
+}
+
+.weight-value.neutral {
+  color: #f59e0b;
 }
 
 .form-group {
-  margin: 15px 0;
+  margin: 20px 0;
+}
+
+input[type="datetime-local"],
+input[type="text"] {
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  width: 100%;
+  font-size: 15px;
+  transition: all 0.2s ease;
+}
+
+input[type="datetime-local"]:focus,
+input[type="text"]:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+button[type="submit"] {
+  padding: 14px 24px;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+button[type="submit"]:hover:not(:disabled) {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+}
+
+button[type="submit"]:disabled {
+  background-color: #94a3b8;
+  cursor: not-allowed;
 }
 
 .city-selector {
-  margin: 20px 0;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  padding: 20px;
-  background: #f8f9fa;
+  margin: 25px 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 25px;
+  background: #f8fafc;
 }
 
 .tabs {
   display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
+  gap: 15px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 15px;
 }
 
 .tab-btn {
   flex: 1;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
   background: white;
-  color: #666;
+  color: #64748b;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 16px;
+  font-size: 15px;
+  font-weight: 500;
 }
 
 .tab-btn.active {
-  background: #4CAF50;
+  background: #3b82f6;
   color: white;
-  border-color: #4CAF50;
+  border-color: #3b82f6;
 }
 
 .tab-btn:hover:not(.active) {
-  background: #f5f5f5;
+  background: #f1f5f9;
 }
 
 .city-selection {
   display: flex;
-  gap: 20px;
-  margin-top: 15px;
-  height: 300px;
+  gap: 25px;
+  margin-top: 20px;
+  height: 350px;
 }
 
 .province-list {
-  width: 150px;
-  border-right: 1px solid #eee;
+  width: 180px;
+  border-right: 1px solid #e2e8f0;
   overflow-y: auto;
-  padding-right: 10px;
+  padding-right: 15px;
 }
 
 .province-item {
-  padding: 12px 15px;
+  padding: 14px 18px;
   cursor: pointer;
   transition: all 0.2s;
-  border-radius: 6px;
-  margin-bottom: 5px;
+  border-radius: 8px;
+  margin-bottom: 8px;
   font-size: 15px;
+  color: #475569;
 }
 
 .province-item:hover {
-  background: #f0f0f0;
+  background: #f1f5f9;
 }
 
 .province-item.active {
-  background: #e8f5e9;
-  color: #4CAF50;
+  background: #dbeafe;
+  color: #3b82f6;
   font-weight: 500;
 }
 
 .city-list {
   flex: 1;
   overflow-y: auto;
-  padding-right: 10px;
+  padding-right: 15px;
 }
 
 .city-item {
-  padding: 12px 15px;
+  padding: 14px 18px;
   cursor: pointer;
   transition: all 0.2s;
-  border-radius: 6px;
-  margin-bottom: 5px;
+  border-radius: 8px;
+  margin-bottom: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 15px;
+  color: #475569;
+  background: white;
+  border: 1px solid #e2e8f0;
 }
 
 .city-item:hover {
-  background: #f0f0f0;
+  background: #f1f5f9;
+  transform: translateX(2px);
 }
 
 .city-item.active {
-  background: #e8f5e9;
-  color: #4CAF50;
+  background: #dbeafe;
+  color: #3b82f6;
+  border-color: #3b82f6;
   font-weight: 500;
 }
 
 .district-selector {
-  margin-top: 20px;
-  border-top: 1px solid #eee;
-  padding-top: 15px;
+  margin-top: 25px;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 20px;
 }
 
 .district-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 10px;
-  max-height: 200px;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 15px;
+  max-height: 250px;
   overflow-y: auto;
 }
 
 .district-item {
-  padding: 10px 15px;
+  padding: 12px 18px;
   cursor: pointer;
   transition: all 0.2s;
-  border-radius: 6px;
+  border-radius: 8px;
   text-align: center;
   background: white;
-  border: 1px solid #eee;
+  border: 1px solid #e2e8f0;
+  color: #475569;
 }
 
 .district-item:hover {
-  background: #f0f0f0;
+  background: #f1f5f9;
+  transform: translateY(-2px);
 }
 
 .district-item.active {
-  background: #e8f5e9;
-  color: #4CAF50;
-  border-color: #4CAF50;
+  background: #dbeafe;
+  color: #3b82f6;
+  border-color: #3b82f6;
+  font-weight: 500;
 }
 
 .province {
-  color: #666;
+  color: #64748b;
   font-size: 0.9em;
 }
 
 .search-results {
-  margin-top: 15px;
-  max-height: 300px;
+  margin-top: 20px;
+  max-height: 350px;
   overflow-y: auto;
-  border: 1px solid #eee;
-  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
   background: white;
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin: 20px 0;
-}
-
-input[type="datetime-local"],
-input[type="text"] {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  width: 100%;
-  font-size: 15px;
-}
-
-button[type="submit"] {
-  padding: 12px 20px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  width: 100%;
-  font-size: 16px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-button[type="submit"]:hover:not(:disabled) {
-  background-color: #45a049;
-  transform: translateY(-1px);
-}
-
-button[type="submit"]:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
-.location-info {
-  margin-top: 10px;
-  font-size: 14px;
-  color: #666;
-  line-height: 1.6;
-}
-
-.solar-time-info {
-  margin: 15px 0;
-  padding: 15px;
-  background-color: #f8f9fa;
-  border-radius: 6px;
-  text-align: center;
-  font-size: 16px;
-  color: #666;
-}
-
-label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  font-size: 15px;
-}
-
-input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
 }
 
 ::-webkit-scrollbar {
@@ -720,184 +808,16 @@ input[type="checkbox"] {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #f1f5f9;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #ccc;
+  background: #cbd5e1;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #999;
-}
-
-.strength-info {
-  margin: 20px 0;
-  padding: 20px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  text-align: center;
-}
-
-.strength-details {
-  margin-top: 15px;
-}
-
-.strength-value {
-  font-weight: bold;
-  font-size: 1.2em;
-}
-
-.strength-value.strong {
-  color: #4CAF50;
-}
-
-.strength-value.slightly-strong {
-  color: #8BC34A;
-}
-
-.strength-value.balanced {
-  color: #FFC107;
-}
-
-.strength-value.slightly-weak {
-  color: #FF9800;
-}
-
-.strength-value.weak {
-  color: #F44336;
-}
-
-.strength-weights {
-  margin-top: 20px;
-  padding: 15px;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.strength-weights h4 {
-  margin: 0 0 15px 0;
-  color: #333;
-  text-align: center;
-}
-
-.weight-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 10px;
-}
-
-.weight-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 8px;
-  background-color: #f8f9fa;
-  border-radius: 4px;
-}
-
-.weight-label {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 4px;
-}
-
-.weight-value {
-  font-weight: bold;
-  font-size: 16px;
-}
-
-.weight-value.positive {
-  color: #4CAF50;
-}
-
-.weight-value.negative {
-  color: #F44336;
-}
-
-.weight-value.neutral {
-  color: #FFC107;
-}
-
-.strength-analysis {
-  background: #fff;
-  border-radius: 8px;
-  padding: 20px;
-  margin-top: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.strength-content {
-  margin-top: 15px;
-}
-
-.strength-judgment {
-  margin-bottom: 20px;
-}
-
-.judgment-item {
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-}
-
-.judgment-item .label {
-  font-weight: bold;
-  min-width: 80px;
-  color: #666;
-}
-
-.judgment-item .value {
-  color: #333;
-}
-
-.judgment-item .score {
-  font-size: 1.2em;
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-.strength-elements {
-  margin-top: 20px;
-  padding: 15px;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.strength-elements h4 {
-  margin: 0 0 15px 0;
-  color: #333;
-  text-align: center;
-}
-
-.elements-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 10px;
-}
-
-.element-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 8px;
-  background-color: #f8f9fa;
-  border-radius: 4px;
-}
-
-.element-label {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 4px;
-}
-
-.element-value {
-  font-weight: bold;
-  font-size: 16px;
-  color: #2c3e50;
+  background: #94a3b8;
 }
 </style>
