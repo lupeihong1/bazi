@@ -125,35 +125,57 @@ const TIME_CORRECTION = {
 export function calculateSolarTime(date, longitude, latitude, useSolarTime = false) {
   if (!useSolarTime) return new Date(date);
 
-  const baseDate = new Date(date);
-  const year = baseDate.getFullYear();
-  const month = baseDate.getMonth() + 1;
-  const day = baseDate.getDate();
-  const totalMinutes = baseDate.getHours() * 60 + baseDate.getMinutes() + baseDate.getSeconds() / 60;
+  // 获取年月日、时分秒
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const hour = date.getHours();
+  const minute = date.getMinutes();
 
-  // 1. 经度修正
-  // 直接计算与东八区（120°）的经度差
-  const longitudeDiff = longitude - 120;
-  const longitudeCorrection = longitudeDiff * 4;
-  
-  // 2. 获取日期时差修正
-  const timeDiff = TIME_CORRECTION[month]?.[day] || 0;
-  console.log('日期时差修正:', timeDiff.toFixed(2), '分钟');
+  // 1. 计算当天是当年的第几天（1月1日为第1天）
+  const dateStart = new Date(Date.UTC(year, 0, 1));
+  const currentDateUTC = Date.UTC(year, month - 1, day);
+  const dayOfYear = Math.floor((currentDateUTC - dateStart.getTime()) / (24 * 3600 * 1000)) + 1;
 
-  // 3. 总修正值并应用
-  const totalCorrection = longitudeCorrection + timeDiff;
-  let correctedMinutes = totalMinutes + totalCorrection;
+  // 2. 计算均时差（Equation of Time，单位：分钟）
+  const gamma = (2 * Math.PI * (dayOfYear - 1)) / 365; // 年度角度
+  const EoT = 229.18 * (
+    0.000075 +
+    0.001868 * Math.cos(gamma) -
+    0.032077 * Math.sin(gamma) -
+    0.014615 * Math.cos(2 * gamma) -
+    0.040849 * Math.sin(2 * gamma)
+  ); // 单位：分钟
 
-  // 4. 处理日期跨越
-  while (correctedMinutes < 0) {
-    correctedMinutes += 1440; // 如果是负数，加一天的分钟数
+  // 3. 计算时区中央经线（中国使用 UTC+8，对应 120°E）
+  const standardMeridian = 120;
+
+  // 4. 经度修正（每度差异 = 4分钟）
+  const longitudeCorrection = (longitude - standardMeridian) * 4; // 单位：分钟
+
+  // 5. 计算总校正时间（分钟）
+  const totalCorrection = longitudeCorrection + EoT;
+
+  // 6. 将标准时间转换为分钟
+  let totalMinutes = hour * 60 + minute + totalCorrection;
+
+  // 7. 处理跨日（分钟 < 0 或 > 1440）
+  let resultDate = new Date(date); // 克隆
+  if (totalMinutes < 0) {
+    resultDate.setDate(resultDate.getDate() - 1);
+    totalMinutes += 1440;
+  } else if (totalMinutes >= 1440) {
+    resultDate.setDate(resultDate.getDate() + 1);
+    totalMinutes -= 1440;
   }
-  correctedMinutes = correctedMinutes % 1440;
 
-  // 5. 生成结果
-  const solarTime = new Date(baseDate);
-  solarTime.setHours(Math.floor(correctedMinutes / 60), Math.floor(correctedMinutes % 60), Math.round((correctedMinutes % 1) * 60));
-  return solarTime;
+  // 8. 转换为小时和分钟
+  const finalHour = Math.floor(totalMinutes / 60);
+  const finalMinute = Math.round(totalMinutes % 60);
+
+  // 9. 设置结果时间
+  resultDate.setHours(finalHour, finalMinute, 0, 0);
+  return resultDate;
 }
 
 /**
