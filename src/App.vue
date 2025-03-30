@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 import { calculateBaZi } from "./utils/bazi";
-import { calculateSolarTime } from "./utils/solarTime";
+import { calculateTrueSolarTime, calculateTimezone } from "./utils/solarTime";
 import { getAllCities, searchCities, getDistrictsByCity } from "./utils/cityData";
 import { analyzeStrength } from "./utils/strength";
 
@@ -129,12 +129,12 @@ const onSubmit = () => {
     }
 
     // 计算真太阳时
-    const solarTime = calculateSolarTime(
+    const solarTimeStr = calculateTrueSolarTime(
       date,
       longitude,
-      latitude,
-      true // 使用真太阳时
+      calculateTimezone(longitude) // 使用动态计算的时区
     );
+    const solarTime = new Date(solarTimeStr);
 
     // 计算八字
     const bazi = calculateBaZi(solarTime);
@@ -145,20 +145,13 @@ const onSubmit = () => {
     // 更新结果
     result.value = {
       ...bazi,
-      真太阳时: solarTime.toLocaleString('zh-CN', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
-      }),
+      真太阳时: solarTimeStr,
       位置信息: {
         城市: city.name,
         区县: district?.name || '市区',
         经度: longitude.toFixed(4),
-        纬度: latitude.toFixed(4)
+        纬度: latitude.toFixed(4),
+        时区: `UTC${calculateTimezone(longitude) >= 0 ? '+' : ''}${calculateTimezone(longitude)}`
       },
       身强身弱: strength
     };
@@ -414,21 +407,23 @@ function getStrengthClass(strength) {
 <style scoped>
 .container {
   max-width: 1000px;
+  width: 100%;
   margin: 0 auto;
-  padding: 30px 20px;
+  padding: 20px 15px;
   background: #f5f7fa;
+  box-sizing: border-box;
 }
 
 h2, h3 {
   color: #2c3e50;
   text-align: center;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
   font-weight: 600;
 }
 
 .current-bazi, .calculator {
-  margin: 25px 0;
-  padding: 25px;
+  margin: 15px 0;
+  padding: 15px;
   border: none;
   border-radius: 12px;
   background: white;
@@ -438,8 +433,8 @@ h2, h3 {
 .bazi-result {
   display: flex;
   justify-content: center;
-  gap: 20px;
-  margin: 25px 0;
+  gap: 15px;
+  margin: 20px 0;
   flex-wrap: wrap;
 }
 
@@ -447,10 +442,10 @@ h2, h3 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  padding: 15px;
   border: 1px solid #eef2f7;
   border-radius: 12px;
-  min-width: 120px;
+  min-width: 100px;
   background: #ffffff;
   transition: all 0.3s ease;
 }
@@ -461,14 +456,14 @@ h2, h3 {
 }
 
 .label {
-  font-size: 15px;
+  font-size: 14px;
   color: #64748b;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   font-weight: 500;
 }
 
 .value {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 600;
   color: #1e293b;
 }
@@ -819,5 +814,140 @@ button[type="submit"]:disabled {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .current-bazi, .calculator {
+    margin: 10px 0;
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .bazi-result {
+    gap: 10px;
+    margin: 10px 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .pillar {
+    min-width: 65px;
+    width: calc(25% - 8px);
+    padding: 8px;
+    box-sizing: border-box;
+  }
+
+  .solar-time-info,
+  .strength-info,
+  .strength-analysis,
+  .strength-judgment,
+  .strength-weights {
+    margin: 10px 0;
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .judgment-item {
+    padding: 8px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .judgment-item .label {
+    width: 100%;
+    min-width: 0;
+    margin-bottom: 4px;
+  }
+
+  .weights-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    width: 100%;
+  }
+
+  .weight-item {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .city-selector {
+    margin: 10px 0;
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .city-selection,
+  .province-list,
+  .city-list,
+  .district-list {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .search-results {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  input[type="datetime-local"],
+  input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+/* 超小屏幕适配 */
+@media (max-width: 360px) {
+  .container {
+    padding: 8px;
+  }
+
+  .pillar {
+    min-width: 60px;
+    width: calc(25% - 6px);
+    padding: 6px;
+  }
+
+  .weights-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+
+  .weight-item {
+    padding: 6px;
+  }
+
+  .district-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+
+  .judgment-item,
+  .city-item,
+  .province-item,
+  .district-item {
+    padding: 8px;
+  }
+}
+
+/* 添加全局盒模型设置 */
+* {
+  box-sizing: border-box;
+}
+
+/* 防止水平滚动 */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
 }
 </style>
