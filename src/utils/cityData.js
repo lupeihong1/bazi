@@ -2,443 +2,275 @@
  * 城市数据工具
  */
 
-// 城市数据
-const cities = [
-  // 中国城市
-  { 
-    name: "北京", 
-    province: "北京市", 
-    country: "中国", 
-    districts: [
-      { name: "东城区", longitude: 116.4166, latitude: 39.9288 },
-      { name: "西城区", longitude: 116.3666, latitude: 39.9155 },
-      { name: "朝阳区", longitude: 116.4977, latitude: 39.9284 },
-      { name: "海淀区", longitude: 116.2988, latitude: 39.9591 }
-    ],
+// 中国城市数据
+const chinaCities = {
+  // 直辖市
+  '北京': { 
+    province: '北京', 
+    latitude: 39.9042, 
     longitude: 116.4074,
-    latitude: 39.9042
-  },
-  { 
-    name: "上海", 
-    province: "上海市", 
-    country: "中国", 
     districts: [
-      { name: "黄浦区", longitude: 121.4846, latitude: 31.2317 },
-      { name: "徐汇区", longitude: 121.4367, latitude: 31.1885 },
-      { name: "长宁区", longitude: 121.4242, latitude: 31.2204 },
-      { name: "静安区", longitude: 121.4484, latitude: 31.2288 }
-    ],
+      { name: '东城区', latitude: 39.9289, longitude: 116.4100 },
+      { name: '西城区', latitude: 39.9123, longitude: 116.3607 },
+      { name: '朝阳区', latitude: 39.9215, longitude: 116.4864 },
+      { name: '海淀区', latitude: 39.9599, longitude: 116.2982 },
+      { name: '丰台区', latitude: 39.8584, longitude: 116.2869 },
+      { name: '石景山区', latitude: 39.9146, longitude: 116.1954 },
+      { name: '门头沟区', latitude: 39.9406, longitude: 116.1024 },
+      { name: '房山区', latitude: 39.7355, longitude: 116.1392 },
+      { name: '通州区', latitude: 39.9025, longitude: 116.6586 },
+      { name: '顺义区', latitude: 40.1289, longitude: 116.6546 },
+      { name: '昌平区', latitude: 40.2208, longitude: 116.2313 },
+      { name: '大兴区', latitude: 39.7268, longitude: 116.3380 },
+      { name: '怀柔区', latitude: 40.3160, longitude: 116.6371 },
+      { name: '平谷区', latitude: 40.1406, longitude: 117.1123 },
+      { name: '密云区', latitude: 40.3769, longitude: 116.8434 },
+      { name: '延庆区', latitude: 40.4566, longitude: 115.9750 }
+    ]
+  },
+  '上海': { 
+    province: '上海', 
+    latitude: 31.2304, 
     longitude: 121.4737,
-    latitude: 31.2304
-  },
-  { 
-    name: "广州", 
-    province: "广东省", 
-    country: "中国", 
     districts: [
-      { name: "越秀区", longitude: 113.2668, latitude: 23.1289 },
-      { name: "海珠区", longitude: 113.3172, latitude: 23.0838 },
-      { name: "荔湾区", longitude: 113.2442, latitude: 23.0931 },
-      { name: "天河区", longitude: 113.3610, latitude: 23.1247 }
-    ],
+      { name: '黄浦区', latitude: 31.2304, longitude: 121.4846 },
+      { name: '徐汇区', latitude: 31.1883, longitude: 121.4365 },
+      { name: '长宁区', latitude: 31.2204, longitude: 121.4246 },
+      { name: '静安区', latitude: 31.2288, longitude: 121.4482 },
+      { name: '普陀区', latitude: 31.2492, longitude: 121.3925 },
+      { name: '虹口区', latitude: 31.2646, longitude: 121.5051 },
+      { name: '杨浦区', latitude: 31.2595, longitude: 121.5260 },
+      { name: '浦东新区', latitude: 31.2215, longitude: 121.5444 },
+      { name: '闵行区', latitude: 31.1128, longitude: 121.3817 },
+      { name: '宝山区', latitude: 31.4055, longitude: 121.4896 },
+      { name: '嘉定区', latitude: 31.3747, longitude: 121.2653 },
+      { name: '金山区', latitude: 30.7419, longitude: 121.3419 },
+      { name: '松江区', latitude: 31.0309, longitude: 121.2288 },
+      { name: '青浦区', latitude: 31.1512, longitude: 121.1242 },
+      { name: '奉贤区', latitude: 30.9178, longitude: 121.4740 },
+      { name: '崇明区', latitude: 31.6229, longitude: 121.3975 }
+    ]
+  },
+  '天津': { 
+    province: '天津', 
+    latitude: 39.0842, 
+    longitude: 117.2010,
+    districts: [
+      { name: '和平区', latitude: 39.1167, longitude: 117.1959 },
+      { name: '河东区', latitude: 39.1224, longitude: 117.2266 },
+      { name: '河西区', latitude: 39.1015, longitude: 117.2234 },
+      { name: '南开区', latitude: 39.1381, longitude: 117.1507 },
+      { name: '河北区', latitude: 39.1566, longitude: 117.1966 },
+      { name: '红桥区', latitude: 39.1671, longitude: 117.1633 },
+      { name: '东丽区', latitude: 39.0866, longitude: 117.3143 },
+      { name: '西青区', latitude: 39.1412, longitude: 117.0122 },
+      { name: '津南区', latitude: 38.9896, longitude: 117.3825 },
+      { name: '北辰区', latitude: 39.2215, longitude: 117.1348 },
+      { name: '武清区', latitude: 39.3841, longitude: 117.0444 },
+      { name: '宝坻区', latitude: 39.7173, longitude: 117.3081 },
+      { name: '滨海新区', latitude: 39.0031, longitude: 117.7107 },
+      { name: '宁河区', latitude: 39.3289, longitude: 117.8283 },
+      { name: '静海区', latitude: 38.9357, longitude: 116.9241 },
+      { name: '蓟州区', latitude: 40.0453, longitude: 117.4082 }
+    ]
+  },
+  '重庆': { 
+    province: '重庆', 
+    latitude: 29.5630, 
+    longitude: 106.5516,
+    districts: [
+      { name: '渝中区', latitude: 29.5528, longitude: 106.5629 },
+      { name: '大渡口区', latitude: 29.4841, longitude: 106.4826 },
+      { name: '江北区', latitude: 29.5754, longitude: 106.5328 },
+      { name: '沙坪坝区', latitude: 29.5412, longitude: 106.4542 },
+      { name: '九龙坡区', latitude: 29.5025, longitude: 106.5107 },
+      { name: '南岸区', latitude: 29.5231, longitude: 106.5608 },
+      { name: '北碚区', latitude: 29.8254, longitude: 106.4379 },
+      { name: '渝北区', latitude: 29.7070, longitude: 106.6302 },
+      { name: '巴南区', latitude: 29.4027, longitude: 106.5404 },
+      { name: '万州区', latitude: 30.8079, longitude: 108.3802 },
+      { name: '涪陵区', latitude: 29.7030, longitude: 107.3949 },
+      { name: '黔江区', latitude: 29.5332, longitude: 108.7826 },
+      { name: '长寿区', latitude: 29.8337, longitude: 107.0749 },
+      { name: '江津区', latitude: 29.2901, longitude: 106.2533 },
+      { name: '合川区', latitude: 29.9780, longitude: 106.2656 },
+      { name: '永川区', latitude: 29.3561, longitude: 105.9271 },
+      { name: '南川区', latitude: 29.1579, longitude: 107.0982 },
+      { name: '綦江区', latitude: 29.0281, longitude: 106.6514 },
+      { name: '大足区', latitude: 29.7005, longitude: 105.7153 },
+      { name: '璧山区', latitude: 29.5920, longitude: 106.2271 },
+      { name: '铜梁区', latitude: 29.8449, longitude: 106.0549 },
+      { name: '潼南区', latitude: 30.1905, longitude: 105.8406 },
+      { name: '荣昌区', latitude: 29.4055, longitude: 105.5941 },
+      { name: '开州区', latitude: 31.1605, longitude: 108.4133 },
+      { name: '梁平区', latitude: 30.6739, longitude: 107.8000 },
+      { name: '武隆区', latitude: 29.3256, longitude: 107.7600 },
+      { name: '城口县', latitude: 31.9476, longitude: 108.6649 },
+      { name: '丰都县', latitude: 29.8635, longitude: 107.7309 },
+      { name: '垫江县', latitude: 30.3302, longitude: 107.3487 },
+      { name: '忠县', latitude: 30.3000, longitude: 108.0377 },
+      { name: '云阳县', latitude: 30.9306, longitude: 108.6977 },
+      { name: '奉节县', latitude: 31.0195, longitude: 109.4639 },
+      { name: '巫山县', latitude: 31.0748, longitude: 109.8789 },
+      { name: '巫溪县', latitude: 31.3986, longitude: 109.6289 },
+      { name: '石柱土家族自治县', latitude: 29.9991, longitude: 108.1141 },
+      { name: '秀山土家族苗族自治县', latitude: 28.4482, longitude: 108.9960 },
+      { name: '酉阳土家族苗族自治县', latitude: 28.8398, longitude: 108.7675 },
+      { name: '彭水苗族土家族自治县', latitude: 29.2939, longitude: 108.1666 }
+    ]
+  },
+
+  // 广东省
+  '广州': { 
+    province: '广东', 
+    latitude: 23.1291, 
     longitude: 113.2644,
-    latitude: 23.1291
-  },
-  { 
-    name: "深圳", 
-    province: "广东省", 
-    country: "中国", 
     districts: [
-      { name: "福田区", longitude: 114.0579, latitude: 22.5431 },
-      { name: "罗湖区", longitude: 114.1315, latitude: 22.5484 },
-      { name: "南山区", longitude: 113.9302, latitude: 22.5329 },
-      { name: "宝安区", longitude: 113.8838, latitude: 22.5550 }
-    ],
+      { name: '越秀区', latitude: 23.1291, longitude: 113.2644 },
+      { name: '海珠区', latitude: 23.0839, longitude: 113.3174 },
+      { name: '荔湾区', latitude: 23.1252, longitude: 113.2430 },
+      { name: '天河区', latitude: 23.1247, longitude: 113.3612 },
+      { name: '白云区', latitude: 23.1573, longitude: 113.2732 },
+      { name: '黄埔区', latitude: 23.1032, longitude: 113.4507 },
+      { name: '番禺区', latitude: 22.9372, longitude: 113.3846 },
+      { name: '花都区', latitude: 23.4039, longitude: 113.2202 },
+      { name: '南沙区', latitude: 22.8016, longitude: 113.5252 },
+      { name: '从化区', latitude: 23.5453, longitude: 113.5867 },
+      { name: '增城区', latitude: 23.2905, longitude: 113.8106 }
+    ]
+  },
+  '深圳': { 
+    province: '广东', 
+    latitude: 22.5431, 
     longitude: 114.0579,
-    latitude: 22.5431
-  },
-  { 
-    name: "成都", 
-    province: "四川省", 
-    country: "中国", 
     districts: [
-      { name: "锦江区", longitude: 104.0803, latitude: 30.6571 },
-      { name: "青羊区", longitude: 104.0622, latitude: 30.6739 },
-      { name: "金牛区", longitude: 104.0524, latitude: 30.6913 },
-      { name: "武侯区", longitude: 104.0433, latitude: 30.6423 }
-    ],
-    longitude: 104.0668,
-    latitude: 30.5728
+      { name: '福田区', latitude: 22.5414, longitude: 114.0556 },
+      { name: '罗湖区', latitude: 22.5482, longitude: 114.1239 },
+      { name: '南山区', latitude: 22.5312, longitude: 113.9294 },
+      { name: '宝安区', latitude: 22.5553, longitude: 113.8831 },
+      { name: '龙岗区', latitude: 22.7209, longitude: 114.2514 },
+      { name: '盐田区', latitude: 22.5551, longitude: 114.2354 },
+      { name: '龙华区', latitude: 22.6564, longitude: 114.0443 },
+      { name: '坪山区', latitude: 22.6908, longitude: 114.3463 },
+      { name: '光明区', latitude: 22.7489, longitude: 113.9359 }
+    ]
   },
-  { name: "重庆", province: "重庆市", country: "中国", longitude: 106.5516, latitude: 29.5630 },
-  { name: "杭州", province: "浙江省", country: "中国", longitude: 120.1551, latitude: 30.2741 },
-  { name: "南京", province: "江苏省", country: "中国", longitude: 118.7969, latitude: 32.0603 },
-  { name: "武汉", province: "湖北省", country: "中国", longitude: 114.3055, latitude: 30.5928 },
-  { name: "西安", province: "陕西省", country: "中国", longitude: 108.9402, latitude: 34.3416 },
-  { name: "长沙", province: "湖南省", country: "中国", longitude: 112.9388, latitude: 28.2282 },
-  { name: "郑州", province: "河南省", country: "中国", longitude: 113.6254, latitude: 34.7466 },
-  { name: "天津", province: "天津市", country: "中国", longitude: 117.1901, latitude: 39.1254 },
-  { name: "苏州", province: "江苏省", country: "中国", longitude: 120.5853, latitude: 31.2989 },
-  { name: "青岛", province: "山东省", country: "中国", longitude: 120.3826, latitude: 36.0671 },
-  { name: "济南", province: "山东省", country: "中国", longitude: 117.1205, latitude: 36.6510 },
-  { name: "大连", province: "辽宁省", country: "中国", longitude: 121.6147, latitude: 38.9140 },
-  { name: "沈阳", province: "辽宁省", country: "中国", longitude: 123.4315, latitude: 41.8057 },
-  { name: "哈尔滨", province: "黑龙江省", country: "中国", longitude: 126.6424, latitude: 45.7574 },
-  { name: "长春", province: "吉林省", country: "中国", longitude: 125.3245, latitude: 43.8868 },
+  '珠海': { province: '广东', latitude: 22.2707, longitude: 113.5767 },
+  '佛山': { province: '广东', latitude: 23.0215, longitude: 113.1214 },
+  '东莞': { province: '广东', latitude: 23.0205, longitude: 113.7518 },
+  '中山': { province: '广东', latitude: 22.5176, longitude: 113.3928 },
+  '惠州': { province: '广东', latitude: 23.1118, longitude: 114.4162 },
+  '江门': { province: '广东', latitude: 22.5787, longitude: 113.0815 },
+  '肇庆': { province: '广东', latitude: 23.0472, longitude: 112.4655 },
+  '汕头': { province: '广东', latitude: 23.3541, longitude: 116.6820 },
+  '湛江': { province: '广东', latitude: 21.2707, longitude: 110.3594 },
+  '茂名': { province: '广东', latitude: 21.6629, longitude: 110.9254 },
+  '韶关': { province: '广东', latitude: 24.8104, longitude: 113.5975 },
+  '梅州': { province: '广东', latitude: 24.2886, longitude: 116.1226 },
+  '汕尾': { province: '广东', latitude: 22.7869, longitude: 115.3752 },
+  '河源': { province: '广东', latitude: 23.7432, longitude: 114.7008 },
+  '阳江': { province: '广东', latitude: 21.8579, longitude: 111.9822 },
+  '清远': { province: '广东', latitude: 23.6820, longitude: 113.0560 },
+  '潮州': { province: '广东', latitude: 23.6569, longitude: 116.6226 },
+  '揭阳': { province: '广东', latitude: 23.5497, longitude: 116.3728 },
+  '云浮': { province: '广东', latitude: 22.9378, longitude: 112.0445 },
 
-  // 补充更多国内城市
-  { 
-    name: "厦门", 
-    province: "福建省", 
-    country: "中国", 
-    districts: [
-      { name: "思明区", longitude: 118.1697, latitude: 24.4457 },
-      { name: "湖里区", longitude: 118.1464, latitude: 24.5120 },
-      { name: "集美区", longitude: 118.0972, latitude: 24.5758 },
-      { name: "海沧区", longitude: 118.0334, latitude: 24.4841 }
-    ],
-    longitude: 118.0894,
-    latitude: 24.4798
-  },
-  { 
-    name: "福州", 
-    province: "福建省", 
-    country: "中国", 
-    districts: [
-      { name: "鼓楼区", longitude: 119.3039, latitude: 26.0823 },
-      { name: "台江区", longitude: 119.3141, latitude: 26.0526 },
-      { name: "仓山区", longitude: 119.2737, latitude: 26.0467 },
-      { name: "晋安区", longitude: 119.3282, latitude: 26.0822 }
-    ],
-    longitude: 119.3062,
-    latitude: 26.0753
-  },
-  { 
-    name: "合肥", 
-    province: "安徽省", 
-    country: "中国", 
-    districts: [
-      { name: "瑶海区", longitude: 117.3095, latitude: 31.8579 },
-      { name: "庐阳区", longitude: 117.2647, latitude: 31.8787 },
-      { name: "蜀山区", longitude: 117.2605, latitude: 31.8512 },
-      { name: "包河区", longitude: 117.3071, latitude: 31.7930 }
-    ],
-    longitude: 117.2272,
-    latitude: 31.8206
-  },
-  { 
-    name: "南昌", 
-    province: "江西省", 
-    country: "中国", 
-    districts: [
-      { name: "东湖区", longitude: 115.8990, latitude: 28.6850 },
-      { name: "西湖区", longitude: 115.8772, latitude: 28.6569 },
-      { name: "青云谱区", longitude: 115.9257, latitude: 28.6212 },
-      { name: "湾里区", longitude: 115.7308, latitude: 28.7148 }
-    ],
-    longitude: 115.8581,
-    latitude: 28.6820
-  },
-  { 
-    name: "赣州", 
-    province: "江西省", 
-    country: "中国", 
-    districts: [
-      { name: "章贡区", longitude: 114.9415, latitude: 25.8627 },
-      { name: "南康区", longitude: 114.7651, latitude: 25.6615 },
-      { name: "赣县区", longitude: 115.0116, latitude: 25.8607 },
-      { name: "信丰县", longitude: 114.9228, latitude: 25.3862 }
-    ],
-    longitude: 114.9350,
-    latitude: 25.8452
-  },
-  { 
-    name: "九江", 
-    province: "江西省", 
-    country: "中国", 
-    districts: [
-      { name: "浔阳区", longitude: 115.9900, latitude: 29.7276 },
-      { name: "濂溪区", longitude: 115.9448, latitude: 29.6718 },
-      { name: "柴桑区", longitude: 115.9111, latitude: 29.6084 },
-      { name: "瑞昌市", longitude: 115.6810, latitude: 29.6766 }
-    ],
-    longitude: 115.9928,
-    latitude: 29.7124
-  },
-  { 
-    name: "上饶", 
-    province: "江西省", 
-    country: "中国", 
-    districts: [
-      { name: "信州区", longitude: 117.9705, latitude: 28.4454 },
-      { name: "广丰区", longitude: 118.1912, latitude: 28.4363 },
-      { name: "广信区", longitude: 117.9074, latitude: 28.4489 },
-      { name: "玉山县", longitude: 118.2448, latitude: 28.6819 }
-    ],
-    longitude: 117.9434,
-    latitude: 28.4548
-  },
-  { 
-    name: "宜春", 
-    province: "江西省", 
-    country: "中国", 
-    districts: [
-      { name: "袁州区", longitude: 114.4241, latitude: 27.7961 },
-      { name: "万载县", longitude: 114.4455, latitude: 28.1057 },
-      { name: "上高县", longitude: 114.9245, latitude: 28.2328 },
-      { name: "宜丰县", longitude: 114.8035, latitude: 28.3936 }
-    ],
-    longitude: 114.4161,
-    latitude: 27.8111
-  },
-  { 
-    name: "吉安", 
-    province: "江西省", 
-    country: "中国", 
-    districts: [
-      { name: "吉州区", longitude: 114.9946, latitude: 27.1448 },
-      { name: "青原区", longitude: 115.0148, latitude: 27.0819 },
-      { name: "吉安县", longitude: 114.9077, latitude: 27.0399 },
-      { name: "吉水县", longitude: 115.1355, latitude: 27.2296 }
-    ],
-    longitude: 114.9935,
-    latitude: 27.1138
-  },
-  { 
-    name: "抚州", 
-    province: "江西省", 
-    country: "中国", 
-    districts: [
-      { name: "临川区", longitude: 116.3612, latitude: 27.9772 },
-      { name: "东乡区", longitude: 116.6032, latitude: 28.2475 },
-      { name: "南城县", longitude: 116.6370, latitude: 27.5697 },
-      { name: "黎川县", longitude: 116.9077, latitude: 27.2823 }
-    ],
-    longitude: 116.3582,
-    latitude: 27.9492
-  },
-  { 
-    name: "新余", 
-    province: "江西省", 
-    country: "中国", 
-    districts: [
-      { name: "渝水区", longitude: 114.9446, latitude: 27.8004 },
-      { name: "分宜县", longitude: 114.6920, latitude: 27.8146 },
-      { name: "仙女湖区", longitude: 114.8054, latitude: 27.8174 }
-    ],
-    longitude: 114.9173,
-    latitude: 27.8174
-  },
-  { 
-    name: "鹰潭", 
-    province: "江西省", 
-    country: "中国", 
-    districts: [
-      { name: "月湖区", longitude: 117.0372, latitude: 28.2391 },
-      { name: "余江区", longitude: 116.8186, latitude: 28.2097 },
-      { name: "贵溪市", longitude: 117.2455, latitude: 28.2926 }
-    ],
-    longitude: 117.0692,
-    latitude: 28.2601
-  },
-  { 
-    name: "萍乡", 
-    province: "江西省", 
-    country: "中国", 
-    districts: [
-      { name: "安源区", longitude: 113.8707, latitude: 27.6151 },
-      { name: "湘东区", longitude: 113.7330, latitude: 27.6407 },
-      { name: "莲花县", longitude: 113.9615, latitude: 27.1277 },
-      { name: "上栗县", longitude: 113.7950, latitude: 27.8803 }
-    ],
-    longitude: 113.8522,
-    latitude: 27.6229
-  },
-  { 
-    name: "景德镇", 
-    province: "江西省", 
-    country: "中国", 
-    districts: [
-      { name: "珠山区", longitude: 117.2028, latitude: 29.2999 },
-      { name: "昌江区", longitude: 117.1837, latitude: 29.2734 },
-      { name: "浮梁县", longitude: 117.2152, latitude: 29.3522 },
-      { name: "乐平市", longitude: 117.1291, latitude: 28.9619 }
-    ],
-    longitude: 117.1738,
-    latitude: 29.2687
-  },
-  { 
-    name: "昆明", 
-    province: "云南省", 
-    country: "中国", 
-    districts: [
-      { name: "五华区", longitude: 102.7074, latitude: 25.0437 },
-      { name: "盘龙区", longitude: 102.7521, latitude: 25.1161 },
-      { name: "官渡区", longitude: 102.7438, latitude: 24.9503 },
-      { name: "西山区", longitude: 102.6644, latitude: 24.9597 }
-    ],
-    longitude: 102.8329,
-    latitude: 24.8801
-  },
-  { 
-    name: "贵阳", 
-    province: "贵州省", 
-    country: "中国", 
-    districts: [
-      { name: "南明区", longitude: 106.7157, latitude: 26.5681 },
-      { name: "云岩区", longitude: 106.7244, latitude: 26.6048 },
-      { name: "花溪区", longitude: 106.6704, latitude: 26.4098 },
-      { name: "乌当区", longitude: 106.7506, latitude: 26.6303 }
-    ],
-    longitude: 106.7135,
-    latitude: 26.5783
-  },
-  { 
-    name: "南宁", 
-    province: "广西壮族自治区", 
-    country: "中国", 
-    districts: [
-      { name: "兴宁区", longitude: 108.3684, latitude: 22.8545 },
-      { name: "青秀区", longitude: 108.4951, latitude: 22.7852 },
-      { name: "江南区", longitude: 108.2732, latitude: 22.7812 },
-      { name: "西乡塘区", longitude: 108.3134, latitude: 22.8339 }
-    ],
-    longitude: 108.3665,
-    latitude: 22.8170
-  },
-  { 
-    name: "海口", 
-    province: "海南省", 
-    country: "中国", 
-    districts: [
-      { name: "秀英区", longitude: 110.2936, latitude: 20.0076 },
-      { name: "龙华区", longitude: 110.3285, latitude: 20.0310 },
-      { name: "琼山区", longitude: 110.3542, latitude: 20.0031 },
-      { name: "美兰区", longitude: 110.3666, latitude: 20.0287 }
-    ],
-    longitude: 110.3312,
-    latitude: 20.0318
-  },
-  { 
-    name: "兰州", 
-    province: "甘肃省", 
-    country: "中国", 
-    districts: [
-      { name: "城关区", longitude: 103.8253, latitude: 36.0571 },
-      { name: "七里河区", longitude: 103.7856, latitude: 36.0659 },
-      { name: "西固区", longitude: 103.6281, latitude: 36.0884 },
-      { name: "安宁区", longitude: 103.7189, latitude: 36.1039 }
-    ],
-    longitude: 103.8343,
-    latitude: 36.0611
-  },
-  { 
-    name: "西宁", 
-    province: "青海省", 
-    country: "中国", 
-    districts: [
-      { name: "城东区", longitude: 101.8038, latitude: 36.5997 },
-      { name: "城中区", longitude: 101.7845, latitude: 36.6222 },
-      { name: "城西区", longitude: 101.7658, latitude: 36.6283 },
-      { name: "城北区", longitude: 101.7661, latitude: 36.6502 }
-    ],
-    longitude: 101.7782,
-    latitude: 36.6171
-  },
-  { 
-    name: "银川", 
-    province: "宁夏回族自治区", 
-    country: "中国", 
-    districts: [
-      { name: "兴庆区", longitude: 106.2885, latitude: 38.4737 },
-      { name: "西夏区", longitude: 106.1561, latitude: 38.4914 },
-      { name: "金凤区", longitude: 106.2426, latitude: 38.4733 },
-      { name: "永宁县", longitude: 106.2531, latitude: 38.2774 }
-    ],
-    longitude: 106.2309,
-    latitude: 38.4872
-  },
-  { 
-    name: "乌鲁木齐", 
-    province: "新疆维吾尔自治区", 
-    country: "中国", 
-    districts: [
-      { name: "天山区", longitude: 87.6319, latitude: 43.7944 },
-      { name: "沙依巴克区", longitude: 87.5979, latitude: 43.8009 },
-      { name: "新市区", longitude: 87.5736, latitude: 43.8438 },
-      { name: "水磨沟区", longitude: 87.6425, latitude: 43.8325 }
-    ],
-    longitude: 87.6168,
-    latitude: 43.8256
-  },
-  { 
-    name: "拉萨", 
-    province: "西藏自治区", 
-    country: "中国", 
-    districts: [
-      { name: "城关区", longitude: 91.1409, latitude: 29.6525 },
-      { name: "堆龙德庆区", longitude: 91.0033, latitude: 29.6456 },
-      { name: "达孜区", longitude: 91.3499, latitude: 29.6694 },
-      { name: "林周县", longitude: 91.2618, latitude: 29.8947 }
-    ],
-    longitude: 91.1172,
-    latitude: 29.6469
-  },
-  { 
-    name: "呼和浩特", 
-    province: "内蒙古自治区", 
-    country: "中国", 
-    districts: [
-      { name: "新城区", longitude: 111.6655, latitude: 40.8582 },
-      { name: "回民区", longitude: 111.6238, latitude: 40.8084 },
-      { name: "玉泉区", longitude: 111.6739, latitude: 40.7524 },
-      { name: "赛罕区", longitude: 111.7019, latitude: 40.7921 }
-    ],
-    longitude: 111.6708,
-    latitude: 40.8424
-  },
+  // 江苏省
+  '南京': { province: '江苏', latitude: 32.0603, longitude: 118.7965 },
+  '苏州': { province: '江苏', latitude: 31.2989, longitude: 120.5853 },
+  '无锡': { province: '江苏', latitude: 31.4907, longitude: 120.3124 },
+  '常州': { province: '江苏', latitude: 31.8107, longitude: 119.9739 },
+  '徐州': { province: '江苏', latitude: 34.2042, longitude: 117.2859 },
+  '南通': { province: '江苏', latitude: 31.9802, longitude: 120.8943 },
+  '扬州': { province: '江苏', latitude: 32.3932, longitude: 119.4129 },
+  '盐城': { province: '江苏', latitude: 33.3495, longitude: 120.1636 },
+  '镇江': { province: '江苏', latitude: 32.1878, longitude: 119.4546 },
+  '泰州': { province: '江苏', latitude: 32.4558, longitude: 119.9250 },
+  '连云港': { province: '江苏', latitude: 34.5965, longitude: 119.2216 },
+  '淮安': { province: '江苏', latitude: 33.6104, longitude: 119.0153 },
+  '宿迁': { province: '江苏', latitude: 33.9619, longitude: 118.2969 },
 
-  // 加拿大城市
-  { 
-    name: "温哥华", 
-    province: "不列颠哥伦比亚省", 
-    country: "加拿大", 
-    districts: [
-      { name: "温哥华市中心", longitude: -123.1207, latitude: 49.2827 },
-      { name: "基斯兰奴", longitude: -123.1560, latitude: 49.2683 },
-      { name: "西区", longitude: -123.1980, latitude: 49.2880 },
-      { name: "耶鲁镇", longitude: -123.1093, latitude: 49.2762 }
-    ],
-    longitude: -123.1207,
-    latitude: 49.2827
-  },
-  { 
-    name: "多伦多", 
-    province: "安大略省", 
-    country: "加拿大", 
-    districts: [
-      { name: "市中心区", longitude: -79.3832, latitude: 43.6532 },
-      { name: "北约克区", longitude: -79.3462, latitude: 43.7615 },
-      { name: "士嘉堡区", longitude: -79.2590, latitude: 43.7764 },
-      { name: "伊东区", longitude: -79.3297, latitude: 43.6769 }
-    ],
-    longitude: -79.3832,
-    latitude: 43.6532
-  },
-  { name: "蒙特利尔", province: "魁北克省", country: "加拿大", longitude: -73.5673, latitude: 45.5017 },
-  { name: "卡尔加里", province: "艾伯塔省", country: "加拿大", longitude: -114.0719, latitude: 51.0447 },
-  { name: "渥太华", province: "安大略省", country: "加拿大", longitude: -75.6972, latitude: 45.4215 },
-  { name: "埃德蒙顿", province: "艾伯塔省", country: "加拿大", longitude: -113.4938, latitude: 53.5461 },
-  { name: "维多利亚", province: "不列颠哥伦比亚省", country: "加拿大", longitude: -123.3656, latitude: 48.4284 },
-  { name: "魁北克城", province: "魁北克省", country: "加拿大", longitude: -71.2108, latitude: 46.8139 }
-];
+  // 浙江省
+  '杭州': { province: '浙江', latitude: 30.2741, longitude: 120.1551 },
+  '宁波': { province: '浙江', latitude: 29.8683, longitude: 121.5440 },
+  '温州': { province: '浙江', latitude: 27.9949, longitude: 120.6994 },
+  '绍兴': { province: '浙江', latitude: 30.0303, longitude: 120.5802 },
+  '嘉兴': { province: '浙江', latitude: 30.7539, longitude: 120.7585 },
+  '湖州': { province: '浙江', latitude: 30.8930, longitude: 120.0868 },
+  '金华': { province: '浙江', latitude: 29.0790, longitude: 119.6474 },
+  '衢州': { province: '浙江', latitude: 28.9359, longitude: 118.8745 },
+  '台州': { province: '浙江', latitude: 28.6564, longitude: 121.4208 },
+  '丽水': { province: '浙江', latitude: 28.4676, longitude: 119.9228 },
+  '舟山': { province: '浙江', latitude: 29.9853, longitude: 122.2072 },
+
+  // 四川省
+  '成都': { province: '四川', latitude: 30.5728, longitude: 104.0668 },
+  '绵阳': { province: '四川', latitude: 31.4675, longitude: 104.6791 },
+  '德阳': { province: '四川', latitude: 31.1268, longitude: 104.3987 },
+  '宜宾': { province: '四川', latitude: 28.7518, longitude: 104.6432 },
+  '南充': { province: '四川', latitude: 30.8373, longitude: 106.1107 },
+  '达州': { province: '四川', latitude: 31.2096, longitude: 107.4680 },
+  '乐山': { province: '四川', latitude: 29.5521, longitude: 103.7654 },
+  '泸州': { province: '四川', latitude: 28.8717, longitude: 105.4433 },
+  '内江': { province: '四川', latitude: 29.5802, longitude: 105.0584 },
+  '自贡': { province: '四川', latitude: 29.3390, longitude: 104.7784 },
+  '攀枝花': { province: '四川', latitude: 26.5823, longitude: 101.7186 },
+  '广元': { province: '四川', latitude: 32.4355, longitude: 105.8434 },
+  '遂宁': { province: '四川', latitude: 30.5328, longitude: 105.5929 },
+  '广安': { province: '四川', latitude: 30.4564, longitude: 106.6334 },
+  '巴中': { province: '四川', latitude: 31.8588, longitude: 106.7579 },
+  '雅安': { province: '四川', latitude: 29.9818, longitude: 103.0133 },
+  '眉山': { province: '四川', latitude: 30.0754, longitude: 103.8485 },
+  '资阳': { province: '四川', latitude: 30.1286, longitude: 104.6276 },
+
+  // 湖北省
+  '武汉': { province: '湖北', latitude: 30.5928, longitude: 114.3055 },
+  '宜昌': { province: '湖北', latitude: 30.7026, longitude: 111.2865 },
+  '襄阳': { province: '湖北', latitude: 32.0089, longitude: 112.1224 },
+  '荆州': { province: '湖北', latitude: 30.3326, longitude: 112.2419 },
+  '黄石': { province: '湖北', latitude: 30.1996, longitude: 115.0385 },
+  '十堰': { province: '湖北', latitude: 32.6294, longitude: 110.7980 },
+  '孝感': { province: '湖北', latitude: 30.9246, longitude: 113.9169 },
+  '荆门': { province: '湖北', latitude: 31.0354, longitude: 112.1993 },
+  '鄂州': { province: '湖北', latitude: 30.3909, longitude: 114.8948 },
+  '黄冈': { province: '湖北', latitude: 30.4545, longitude: 114.8724 },
+  '咸宁': { province: '湖北', latitude: 29.8414, longitude: 114.3225 },
+  '随州': { province: '湖北', latitude: 31.6901, longitude: 113.3826 },
+  '恩施': { province: '湖北', latitude: 30.2722, longitude: 109.4882 },
+  '仙桃': { province: '湖北', latitude: 30.3625, longitude: 113.4541 },
+  '潜江': { province: '湖北', latitude: 30.4020, longitude: 112.9001 },
+  '天门': { province: '湖北', latitude: 30.6633, longitude: 113.1665 },
+  '神农架': { province: '湖北', latitude: 31.7444, longitude: 110.6758 }
+};
+
+// 处理中国城市数据
+const processChinaCities = () => {
+  const citiesList = [];
+  
+  // 遍历所有城市
+  Object.entries(chinaCities).forEach(([cityName, cityData]) => {
+    citiesList.push({
+      name: cityName,
+      province: cityData.province,
+      country: "中国",
+      districts: cityData.districts || [],
+      longitude: cityData.longitude,
+      latitude: cityData.latitude
+    });
+  });
+
+  return citiesList;
+};
+
+// 合并所有城市数据
+const allCities = processChinaCities();
 
 /**
  * 获取所有城市
  * @returns {Array} 城市列表
  */
 export function getAllCities() {
-  return cities;
+  return allCities;
 }
 
 /**
@@ -447,32 +279,14 @@ export function getAllCities() {
  * @param {Array} citiesList - 可选，指定搜索范围
  * @returns {Array} 匹配的城市或区县列表
  */
-export function searchCities(keyword, citiesList = cities) {
+export function searchCities(keyword, citiesList = allCities) {
   if (!keyword) return [];
   const lowerKeyword = keyword.toLowerCase();
   
-  const results = [];
-  citiesList.forEach(city => {
-    // 搜索城市名称或省份
-    if (city.name.toLowerCase().includes(lowerKeyword) ||
-        city.province.toLowerCase().includes(lowerKeyword)) {
-      results.push(city);
-    }
-    // 搜索区县
-    else if (city.districts) {
-      const matchingDistricts = city.districts.filter(district =>
-        district.name.toLowerCase().includes(lowerKeyword)
-      );
-      if (matchingDistricts.length > 0) {
-        results.push({
-          ...city,
-          matchingDistricts
-        });
-      }
-    }
-  });
-  
-  return results;
+  return citiesList.filter(city => 
+    city.name.toLowerCase().includes(lowerKeyword) ||
+    city.province.toLowerCase().includes(lowerKeyword)
+  );
 }
 
 /**
@@ -481,18 +295,16 @@ export function searchCities(keyword, citiesList = cities) {
  * @returns {Array} 城市列表
  */
 export function getCitiesByCountry(country) {
-  return cities.filter(city => city.country === country);
+  return allCities.filter(city => city.country === country);
 }
 
 /**
- * 按省份获取城市列表（仅适用于中国城市）
+ * 按省份获取城市列表
  * @param {string} province - 省份名称
  * @returns {Array} 城市列表
  */
 export function getCitiesByProvince(province) {
-  return cities.filter(city => 
-    city.country === '中国' && city.province === province
-  );
+  return allCities.filter(city => city.province === province);
 }
 
 /**
@@ -501,6 +313,29 @@ export function getCitiesByProvince(province) {
  * @returns {Array} 区县列表
  */
 export function getDistrictsByCity(cityName) {
-  const city = cities.find(c => c.name === cityName);
+  const city = allCities.find(c => c.name === cityName);
   return city?.districts || [];
+}
+
+/**
+ * 获取所有省份列表
+ * @param {string} country - 可选，指定国家
+ * @returns {Array} 省份列表
+ */
+export function getAllProvinces(country) {
+  const provinces = new Set();
+  allCities
+    .filter(city => !country || city.country === country)
+    .forEach(city => provinces.add(city.province));
+  return Array.from(provinces).sort();
+}
+
+/**
+ * 获取所有国家列表
+ * @returns {Array} 国家列表
+ */
+export function getAllCountries() {
+  const countries = new Set();
+  allCities.forEach(city => countries.add(city.country));
+  return Array.from(countries).sort();
 } 

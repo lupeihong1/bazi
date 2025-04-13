@@ -16,6 +16,15 @@ const FIVE_ELEMENTS = {
   亥: "水", 子: "水"
 };
 
+// 五行相生关系
+const FIVE_ELEMENTS_GENERATING = {
+  "木": "火",  // 木生火
+  "火": "土",  // 火生土
+  "土": "金",  // 土生金
+  "金": "水",  // 金生水
+  "水": "木"   // 水生木
+};
+
 // 干支权重
 const WEIGHTS = {
   年干: 8,   // 年干8分
@@ -31,11 +40,20 @@ const WEIGHTS = {
  * 计算天干力量
  * @param {string} dayGan - 日干
  * @param {string} gan - 天干
- * @returns {number} 力量值（1表示同类，0表示不同类）
+ * @returns {number} 力量值（1表示同类或生助，0表示不同类）
  */
 function calculateGanStrength(dayGan, gan) {
   if (!dayGan || !gan) return 0;
-  return FIVE_ELEMENTS[dayGan] === FIVE_ELEMENTS[gan] ? 1 : 0;
+  
+  const dayElement = FIVE_ELEMENTS[dayGan];
+  const ganElement = FIVE_ELEMENTS[gan];
+  
+  // 同类五行
+  if (dayElement === ganElement || FIVE_ELEMENTS_GENERATING[ganElement] === dayElement) {
+    return 1;
+  }
+  
+  return 0;
 }
 
 /**
@@ -51,22 +69,7 @@ function formatValue(value) {
  */
 export function analyzeStrength(bazi) {
   if (!bazi || !bazi.日柱 || !bazi.年柱 || !bazi.月柱 || !bazi.时柱) {
-    return {
-      strength: "未知",
-      description: "八字数据不完整",
-      details: {
-        score: "0",
-        weights: {
-          年干: "0.00",
-          年支: "0.00",
-          月干: "0.00",
-          月支: "0.00",
-          日支: "0.00",
-          时干: "0.00",
-          时支: "0.00"
-        }
-      }
-    };
+    return "未知";
   }
 
   const dayGan = bazi.日柱[0];
@@ -74,45 +77,31 @@ export function analyzeStrength(bazi) {
   const yearGan = bazi.年柱[0];
   const monthGan = bazi.月柱[0];
   const timeGan = bazi.时柱[0];
+  const yearZhi = bazi.年柱[1];
+  const monthZhi = bazi.月柱[1];
+  const dayZhi = bazi.日柱[1];
+  const timeZhi = bazi.时柱[1];
 
   // 计算各干支力量
   const yearGanStrength = calculateGanStrength(dayGan, yearGan);
   const monthGanStrength = calculateGanStrength(dayGan, monthGan);
   const timeGanStrength = calculateGanStrength(dayGan, timeGan);
+  const yearZhiStrength = calculateGanStrength(dayGan, yearZhi);
+  const monthZhiStrength = calculateGanStrength(dayGan, monthZhi);
+  const dayZhiStrength = calculateGanStrength(dayGan, dayZhi);
+  const timeZhiStrength = calculateGanStrength(dayGan, timeZhi);
 
-  // 计算总分数（只计算天干）
+  // 计算总分数（包含天干地支）
   const score = 
     (yearGanStrength * WEIGHTS["年干"]) +
     (monthGanStrength * WEIGHTS["月干"]) +
-    (timeGanStrength * WEIGHTS["时干"]);
+    (timeGanStrength * WEIGHTS["时干"]) +
+    (yearZhiStrength * WEIGHTS["年支"]) +
+    (monthZhiStrength * WEIGHTS["月支"]) +
+    (dayZhiStrength * WEIGHTS["日支"]) +
+    (timeZhiStrength * WEIGHTS["时支"]);
 
   // 判断身强身弱
-  let strength = "";
-  let description = "";
-
-  if (score >= 50) {
-    strength = "强";
-    description = `日主${dayGan}${dayElement}，得分${Math.round(score)}分，大于等于50分，为身强。命主性格刚强，做事果断，但可能过于固执。`;
-  } else {
-    strength = "弱";
-    description = `日主${dayGan}${dayElement}，得分${Math.round(score)}分，低于50分，为身弱。命主性格温和，做事谨慎，但可能优柔寡断。`;
-  }
-
-  return {
-    strength,
-    description,
-    details: {
-      score: Math.round(score),
-      dayElement: dayElement,
-      weights: {
-        年干: formatValue(yearGanStrength * WEIGHTS["年干"]),
-        年支: formatValue(0),
-        月干: formatValue(monthGanStrength * WEIGHTS["月干"]),
-        月支: formatValue(0),
-        日支: formatValue(0),
-        时干: formatValue(timeGanStrength * WEIGHTS["时干"]),
-        时支: formatValue(0)
-      }
-    }
-  };
+  const strength = score >= 50 ? "强" : "弱";
+  return `身${strength}${dayGan}${dayElement}`;
 }

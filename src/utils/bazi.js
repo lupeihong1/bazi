@@ -284,6 +284,8 @@ const timePillarCalculator = {
 };
 
 // ============= 主函数 =============
+import { calculateSolarTime } from './solarTime';
+
 /**
  * 计算八字
  * @param {string|Date} dateTime - 日期时间字符串或Date对象
@@ -302,7 +304,6 @@ export function calculateBaZi(dateTime, useSolarTime = false, longitude, latitud
   
   // 如果使用真太阳时且提供了经纬度，则计算真太阳时
   if (useSolarTime && longitude !== undefined && latitude !== undefined) {
-    const { calculateSolarTime } = require('./solarTime');
     date = calculateSolarTime(date, longitude, latitude, true);
   }
 

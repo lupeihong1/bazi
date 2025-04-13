@@ -11,11 +11,15 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "china-location": "^2.1.0",
+    "element-plus": "^2.9.7",
+    "vant": "^4.9.18",
     "vue": "^3.5.13"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.1",
     "gh-pages": "^6.3.0",
+    "sass": "^1.86.3",
     "vite": "^6.2.0"
   }
 }

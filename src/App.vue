@@ -1,398 +1,159 @@
-<script setup>
-import { ref, computed, watch } from "vue";
-import { calculateBaZi } from "./utils/bazi";
-import { calculateTrueSolarTime, calculateTimezone } from "./utils/solarTime";
-import { getAllCities, searchCities, getDistrictsByCity } from "./utils/cityData";
-import { analyzeStrength } from "./utils/strength";
-
-const selectedDate = ref('2000-12-04T23:55');
-const selectedCity = ref("");
-const selectedDistrict = ref("");
-const useSolarTime = ref(false);
-const result = ref({});
-const solarTimeResult = ref(null);
-const searchKeyword = ref("");
-const isLoading = ref(false);
-const cityTab = ref("domestic");
-const selectedProvince = ref("");
-const districts = ref([]);
-
-// 获取所有城市并按省份分组
-const groupedCities = computed(() => {
-  const allCities = getAllCities();
-  const grouped = {};
-  
-  if (cityTab.value === "domestic") {
-    // 处理国内城市
-    allCities
-      .filter(city => city.country === "中国")
-      .forEach(city => {
-        if (!grouped[city.province]) {
-          grouped[city.province] = [];
-        }
-        grouped[city.province].push(city);
-      });
-  } else {
-    // 只处理加拿大城市
-    allCities
-      .filter(city => city.country === "加拿大" && city.latitude >= 0)
-      .forEach(city => {
-        if (!grouped[city.province]) {
-          grouped[city.province] = [];
-        }
-        grouped[city.province].push(city);
-      });
-  }
-  
-  return grouped;
-});
-
-// 获取省份列表
-const provinces = computed(() => {
-  return Object.keys(groupedCities.value).sort();
-});
-
-// 获取当前省份的城市
-const citiesInProvince = computed(() => {
-  if (!selectedProvince.value) return [];
-  return groupedCities.value[selectedProvince.value] || [];
-});
-
-// 搜索结果
-const searchResults = computed(() => {
-  if (!searchKeyword.value) return [];
-  
-  const results = [];
-  Object.entries(groupedCities.value).forEach(([province, cities]) => {
-    cities.forEach(city => {
-      if (city.name.includes(searchKeyword.value)) {
-        results.push({ ...city, province });
-      }
-    });
-  });
-  
-  return results;
-});
-
-// 切换城市标签页
-const switchCityTab = (tab) => {
-  cityTab.value = tab;
-  selectedCity.value = "";
-  selectedProvince.value = "";
-  searchKeyword.value = "";
-};
-
-// 当选择城市时更新区县列表
-watch(selectedCity, (newCity) => {
-  selectedDistrict.value = '';
-  if (newCity) {
-    districts.value = getDistrictsByCity(newCity);
-  } else {
-    districts.value = [];
-  }
-});
-
-// 修改 onSubmit 函数
-const onSubmit = () => {
-  if (!selectedDate.value) {
-    alert('请选择日期');
-    return;
-  }
-
-  // 将日期字符串转换为 Date 对象
-  const date = new Date(selectedDate.value);
-
-  // 如果使用真太阳时，需要验证城市选择
-  if (useSolarTime.value) {
-    if (!selectedCity.value) {
-      alert('请选择城市');
-      return;
-    }
-
-    // 从所有城市中查找选中的城市
-    const allCities = getAllCities();
-    const city = allCities.find(c => c.name === selectedCity.value);
-    
-    if (!city) {
-      alert('无法找到选中的城市信息');
-      return;
-    }
-
-    // 使用区县的经纬度，如果没有选择区县则使用城市的经纬度
-    const district = city.districts?.find(d => d.name === selectedDistrict.value);
-    const longitude = district?.longitude || city.longitude;
-    const latitude = district?.latitude || city.latitude;
-
-    if (!longitude || !latitude) {
-      alert('无法获取位置信息');
-      return;
-    }
-
-    // 计算真太阳时
-    const solarTimeStr = calculateTrueSolarTime(
-      date,
-      longitude,
-      calculateTimezone(longitude) // 使用动态计算的时区
-    );
-    const solarTime = new Date(solarTimeStr);
-
-    // 计算八字
-    const bazi = calculateBaZi(solarTime);
-    
-    // 计算身强身弱
-    const strength = analyzeStrength(bazi);
-    
-    // 更新结果
-    result.value = {
-      ...bazi,
-      真太阳时: solarTimeStr,
-      位置信息: {
-        城市: city.name,
-        区县: district?.name || '市区',
-        经度: longitude.toFixed(4),
-        纬度: latitude.toFixed(4),
-        时区: `UTC${calculateTimezone(longitude) >= 0 ? '+' : ''}${calculateTimezone(longitude)}`
-      },
-      身强身弱: strength
-    };
-  } else {
-    // 不使用真太阳时，直接使用选择的时间计算八字
-    const bazi = calculateBaZi(date);
-    
-    // 计算身强身弱
-    const strength = analyzeStrength(bazi);
-    
-    // 更新结果，不包含真太阳时和位置信息
-    result.value = {
-      ...bazi,
-      身强身弱: strength
-    };
-  }
-};
-
-// 计算当前时刻的八字
-const now = new Date();
-const currentBazi = calculateBaZi(now);
-
-// 添加权重样式判断函数
-function getWeightClass(value) {
-  const numValue = parseFloat(value);
-  if (numValue > 0) return 'positive';
-  if (numValue < 0) return 'negative';
-  return 'neutral';
-}
-
-// 添加身强身弱样式判断函数
-function getStrengthClass(strength) {
-  switch (strength) {
-    case '强':
-      return 'strong';
-    case '偏强':
-      return 'slightly-strong';
-    case '均衡':
-      return 'balanced';
-    case '偏弱':
-      return 'slightly-weak';
-    case '弱':
-      return 'weak';
-    default:
-      return '';
-  }
-}
-</script>
-
 <template>
   <div class="container">
-    <h2>八字计算</h2>
-    <div class="current-bazi">
-      <h3>当前时刻八字</h3>
-      <div class="bazi-result">
-        <div class="pillar">
-          <span class="label">年柱</span>
-          <span class="value">{{ currentBazi.年柱 }}</span>
-        </div>
-        <div class="pillar">
-          <span class="label">月柱</span>
-          <span class="value">{{ currentBazi.月柱 }}</span>
-        </div>
-        <div class="pillar">
-          <span class="label">日柱</span>
-          <span class="value">{{ currentBazi.日柱 }}</span>
-        </div>
-        <div class="pillar">
-          <span class="label">时柱</span>
-          <span class="value">{{ currentBazi.时柱 }}</span>
-        </div>
+    <div class="form-container">
+      <div class="form-group">
+        <label>出生年/月/日*</label>
+        <el-date-picker
+          v-model="birthDate"
+          type="date"
+          class="input-field"
+          placeholder="选择出生日期"
+          format="YYYY-MM-DD"
+          value-format="YYYY-MM-DD"
+        />
       </div>
+
+      <div class="form-group">
+        <label>出生地点*</label>
+        <CustomCascader
+          v-model="location"
+          :options="locationData"
+          placeholder="请选择出生地点"
+          class="input-field"
+        />
+      </div>
+
+      <div class="form-row">
+        <el-row :gutter="20">
+          <el-col :xs="22" :sm="7">
+            <div class="form-group half">
+              <label>出生时辰*</label>
+              <el-select
+                v-model="birthHour"
+                class="input-field"
+                placeholder="请选择时辰"
+              >
+                <el-option
+                  v-for="hour in hours"
+                  :key="hour.value"
+                  :label="hour.label"
+                  :value="hour.value"
+                />
+              </el-select>
+            </div>
+          </el-col>
+
+          <el-col :xs="24" :sm="12">
+            <div class="form-group half">
+              <label>性别*</label>
+              <div class="radio-group">
+                <el-radio-group v-model="gender">
+                  <el-radio :value="'male'">男</el-radio>
+                  <el-radio :value="'female'">女</el-radio>
+                </el-radio-group>
+              </div>
+            </div>
+          </el-col>
+        </el-row>
+      </div>
+
+      <el-button type="primary" class="submit-btn" @click="handleSubmit">
+        开始测算
+      </el-button>
+      <p class="hint">知命未来运势，从了解自己开始</p>
     </div>
 
-    <div class="calculator">
-      <h3>选择日期时间计算八字</h3>
-      <form @submit.prevent="onSubmit">
-        <div class="form-group">
-          <label>选择日期：</label>
-          <input type="datetime-local" v-model="selectedDate">
-        </div>
+    <div v-if="destinyInfo" class="destiny-result">
+      <div class="result-header">
+        <h2>您的命理测算结果：{{ destinyInfo.name }}</h2>
+        <div class="result-time">测算时间：{{ new Date().toLocaleString() }}</div>
+      </div>
 
-        <div class="form-group">
-          <label>
-            <input type="checkbox" v-model="useSolarTime">
-            使用真太阳时
-          </label>
-        </div>
-        
-        <div v-if="useSolarTime" class="city-selector">
-          <div class="tabs">
-            <button 
-              type="button"
-              class="tab-btn"
-              :class="{ active: cityTab === 'domestic' }"
-              @click="switchCityTab('domestic')"
-            >
-              国内
-            </button>
-            <button 
-              type="button"
-              class="tab-btn"
-              :class="{ active: cityTab === 'overseas' }"
-              @click="switchCityTab('overseas')"
-            >
-              海外
-            </button>
-          </div>
-          
-          <div class="form-group">
-            <input 
-              v-model="searchKeyword" 
-              type="text" 
-              :placeholder="cityTab === 'domestic' ? '搜索城市' : '搜索加拿大城市'"
-            />
-          </div>
-          
-          <div v-if="searchKeyword" class="search-results">
-            <div 
-              v-for="city in searchResults" 
-              :key="city.name"
-              class="city-item"
-              :class="{ active: selectedCity === city.name }"
-              @click="selectedCity = city.name"
-            >
-              {{ city.name }}
-              <span class="province">({{ city.province }})</span>
-            </div>
-          </div>
-          
-          <div v-else class="city-selection">
-            <div class="province-list">
-              <div 
-                v-for="province in provinces" 
-                :key="province"
-                class="province-item"
-                :class="{ active: selectedProvince === province }"
-                @click="selectedProvince = province"
-              >
-                {{ province }}
+      <div class="result-sections">
+        <div class="left-section">
+          <div class="section">
+            <div class="section-icon">👤</div>
+            <div class="section-title">个人特征</div>
+            <div class="section-content">
+              <div class="birth-info">
+                生辰八字：{{ baziInfo.bazi }}<br>
+                真太阳时：{{ baziInfo.solarTime }}
               </div>
-            </div>
-            
-            <div class="city-list">
-              <div 
-                v-for="city in citiesInProvince" 
-                :key="city.name"
-                class="city-item"
-                :class="{ active: selectedCity === city.name }"
-                @click="selectedCity = city.name"
-              >
-                {{ city.name }}
+              <div v-for="(info, index) in destinyInfo.personality.info1" :key="index" class="info-item">
+                {{ info }}
               </div>
+              <div class="info-detail">{{ destinyInfo.personality.info2 }}</div>
             </div>
           </div>
 
-          <div v-if="districts.length > 0" class="district-selector">
-            <div class="district-list">
-              <div 
-                v-for="district in districts" 
-                :key="district.name"
-                class="district-item"
-                :class="{ active: selectedDistrict === district.name }"
-                @click="selectedDistrict = district.name"
-              >
-                {{ district.name }}
+          <div class="section">
+            <div class="section-icon">🤝</div>
+            <div class="section-title">人际关系</div>
+            <div class="section-content">
+              <div class="relation-group">
+                <div class="group-title">交友建议</div>
+                <div v-for="(item, index) in destinyInfo.relationship.friendSuggestion" :key="index" class="relation-item">
+                  {{ item }}
+                </div>
+              </div>
+              <div class="relation-group">
+                <div class="group-title">适配伴侣</div>
+                <div v-for="(item, index) in destinyInfo.relationship.coupleSuggestion" :key="index" class="relation-item">
+                  {{ item }}
+                </div>
               </div>
             </div>
           </div>
         </div>
-        
-        <button type="submit" :disabled="isLoading">
-          {{ isLoading ? '计算中...' : '计算八字' }}
-        </button>
-      </form>
 
-      <div v-if="Object.keys(result).length" class="bazi-result">
-        <div class="pillar">
-          <span class="label">年柱</span>
-          <span class="value">{{ result.年柱 }}</span>
-        </div>
-        <div class="pillar">
-          <span class="label">月柱</span>
-          <span class="value">{{ result.月柱 }}</span>
-        </div>
-        <div class="pillar">
-          <span class="label">日柱</span>
-          <span class="value">{{ result.日柱 }}</span>
-        </div>
-        <div class="pillar">
-          <span class="label">时柱</span>
-          <span class="value">{{ result.时柱 }}</span>
-        </div>
-        <div v-if="result.真太阳时" class="solar-time-info">
-          <p>真太阳时：{{ result.真太阳时 }}</p>
-          <p class="location-info">
-            位置：{{ result.位置信息.城市 }}
-            <span v-if="result.位置信息.区县 !== '市区'">{{ result.位置信息.区县 }}</span>
-            <br>
-            经度：{{ result.位置信息.经度 }}°E
-            <br>
-            纬度：{{ result.位置信息.纬度 }}°N
-          </p>
-        </div>
-        <div v-if="result.身强身弱" class="strength-info">
-          <h3>身强身弱分析</h3>
-          <div class="strength-details">
-            <div class="strength-analysis">
-              <div class="strength-content">
-                <div class="strength-judgment">
-                  <div class="judgment-item">
-                    <span class="label">日主：</span>
-                    <span class="value">{{ result.日柱[0] }}{{ result.身强身弱.details.dayElement }}</span>
-                  </div>
-                  <div class="judgment-item">
-                    <span class="label">总体判断：</span>
-                    <span :class="['value', getStrengthClass(result.身强身弱.strength)]">
-                      {{ result.身强身弱.strength }}
-                    </span>
-                  </div>
-                  <div class="judgment-item">
-                    <span class="label">得分：</span>
-                    <span class="value score">{{ result.身强身弱.details.score }}分</span>
-                  </div>
-                  <div class="judgment-item">
-                    <span class="label">判断依据：</span>
-                    <span class="value">{{ result.身强身弱.description }}</span>
+        <div class="right-section">
+          <div class="section">
+            <div class="section-icon">📊</div>
+            <div class="section-title">运势解读</div>
+            <div class="section-content">
+              <div v-for="(item, index) in destinyInfo.luck.info1" :key="index" class="fortune-item">
+                <div class="fortune-title">{{ item.title }}</div>
+                <div class="fortune-desc">{{ item.desc }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-icon">✨</div>
+            <div class="section-title">开运建议</div>
+            <div class="section-content">
+              <div class="advice-group">
+                <div class="advice-title">开运颜色</div>
+                <div class="advice-items">
+                  <div v-for="(color, index) in destinyInfo.luckSuggestion.color" :key="index" class="tag-item">
+                    {{ color }}
                   </div>
                 </div>
-                
-                <div class="strength-weights">
-                  <h4>各干支力量分布</h4>
-                  <div class="weights-grid">
-                    <div v-for="(value, key) in result.身强身弱.details.weights" 
-                         :key="key" 
-                         class="weight-item">
-                      <span class="weight-label">{{ key }}：</span>
-                      <span :class="['weight-value', getWeightClass(parseFloat(value))]">
-                        {{ value }}
-                      </span>
-                    </div>
+              </div>
+
+              <div class="advice-group">
+                <div class="advice-title">开运方位</div>
+                <div class="advice-items">
+                  <div v-for="(location, index) in destinyInfo.luckSuggestion.location" :key="index" class="tag-item">
+                    {{ location }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="advice-group">
+                <div class="advice-title">适合职业</div>
+                <div class="advice-items">
+                  <div v-for="(career, index) in destinyInfo.career.needCareer" :key="index" class="tag-item">
+                    {{ career }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="advice-group">
+                <div class="advice-title">开运tips</div>
+                <div class="tips-items">
+                  <div v-for="(tip, index) in destinyInfo.luckTips" :key="index" class="tip-item">
+                    {{ tip }}
                   </div>
                 </div>
               </div>
@@ -404,550 +165,796 @@ function getStrengthClass(strength) {
   </div>
 </template>
 
-<style scoped>
+<script setup>
+import { ref, onMounted, onUnmounted } from "vue";
+import { ElMessage } from "element-plus";
+import "element-plus/dist/index.css";
+import { locationData } from "./data/locationData";
+import CustomCascader from "./components/CustomCascader.vue";
+import { calculateSolarTime } from "./utils/solarTime";
+import { getLocationInfo } from "./data/locationData";
+import { calculateBaZi } from "./utils/bazi";
+import { analyzeStrength } from "./utils/strength";
+import { destinyData } from "./data/destinyData";
+
+const birthDate = ref("");
+const location = ref([]);
+const birthHour = ref("");
+const gender = ref("");
+const isMobile = ref(false);
+const destinyInfo = ref(null);
+const baziInfo = ref({
+  bazi: '',
+  solarTime: ''
+});
+
+const locationProps = {
+  expandTrigger: "hover",
+  checkStrictly: false,
+  multiple: false,
+  emitPath: true,
+  lazy: false,
+  value: "value",
+  label: "label",
+  children: "children",
+};
+
+const hours = [
+  { value: "23-1", label: "子时 (23:00-1:00)" },
+  { value: "1-3", label: "丑时 (1:00-3:00)" },
+  { value: "3-5", label: "寅时 (3:00-5:00)" },
+  { value: "5-7", label: "卯时 (5:00-7:00)" },
+  { value: "7-9", label: "辰时 (7:00-9:00)" },
+  { value: "9-11", label: "巳时 (9:00-11:00)" },
+  { value: "11-13", label: "午时 (11:00-13:00)" },
+  { value: "13-15", label: "未时 (13:00-15:00)" },
+  { value: "15-17", label: "申时 (15:00-17:00)" },
+  { value: "17-19", label: "酉时 (17:00-19:00)" },
+  { value: "19-21", label: "戌时 (19:00-21:00)" },
+  { value: "21-23", label: "亥时 (21:00-23:00)" },
+];
+
+const checkMobile = () => {
+  isMobile.value = window.innerWidth <= 768;
+};
+
+onMounted(() => {
+  checkMobile();
+  window.addEventListener("resize", checkMobile);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("resize", checkMobile);
+});
+
+const handleSubmit = () => {
+  if (!birthDate.value) {
+    ElMessage.warning("请选择出生日期");
+    return;
+  }
+  if (!gender.value) {
+    ElMessage.warning("请选择性别");
+    return;
+  }
+
+  // 解析时辰，获取中间值
+  let hourValue = 12; // 默认值
+  if (birthHour.value) {
+    // 处理子时（23-1）的特殊情况
+    if (birthHour.value === '23-1') {
+      hourValue = 0; // 子时取0点
+    } else {
+      const [start, end] = birthHour.value.split('-').map(Number);
+      hourValue = Math.floor((start + end) / 2);
+    }
+  }
+
+  // 创建日期对象
+  const [year, month, day] = birthDate.value.split('-').map(Number);
+  const date = new Date(year, month - 1, day, hourValue, 0, 0);
+
+  // 获取选中的城市信息或使用默认的北京经纬度
+  let locationInfo;
+  if (location.value.length > 0) {
+    const selectedCity = location.value[location.value.length - 1];
+    locationInfo = getLocationInfo(selectedCity);
+  }
+  
+  // 如果没有选择城市或无法获取城市信息，直接使用用户选择的时间
+  let targetDate = date;
+  if (locationInfo?.coordinates) {
+    // 计算真太阳时
+    targetDate = calculateSolarTime(
+      date,
+      locationInfo.coordinates.lng,
+      locationInfo.coordinates.lat,
+      true
+    );
+  }
+
+  // 计算八字
+  const bazi = calculateBaZi(targetDate, !!locationInfo?.coordinates, locationInfo?.coordinates?.lng, locationInfo?.coordinates?.lat);
+  
+  // 更新八字信息
+  baziInfo.value = {
+    bazi: `${bazi.年柱} ${bazi.月柱} ${bazi.日柱} ${bazi.时柱}`,
+    solarTime: targetDate.toLocaleString()
+  };
+
+  // 分析身强身弱
+  const strength = analyzeStrength(bazi);
+
+  // 查找对应的命理数据
+  destinyInfo.value = destinyData.find(item => item.name === strength);
+  
+  console.log('命理信息：', {
+    选择时间: date.toLocaleString(),
+    经纬度: locationInfo?.coordinates ? `${locationInfo.coordinates.lng.toFixed(4)}°E, ${locationInfo.coordinates.lat.toFixed(4)}°N` : '未选择地区',
+    真太阳时: targetDate.toLocaleString(),
+    八字: `${bazi.年柱} ${bazi.月柱} ${bazi.日柱} ${bazi.时柱}`,
+    身强身弱: strength,
+    命理数据: destinyInfo.value || '未找到对应的命理数据'
+  });
+};
+
+const getImageUrl = (name) => {
+  return `/images/destiny/${name}.png`;
+};
+</script>
+
+<style lang="scss" scoped>
 .container {
-  max-width: 1000px;
   width: 100%;
-  margin: 0 auto;
-  padding: 20px 15px;
-  background: #f5f7fa;
-  box-sizing: border-box;
+  height: max-content;
+
+  .form-container,
+  .result-container {
+    background-color: #faf7f2;
+    padding: 30px 20px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    width: max(300px, 60%);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    margin: 100px auto;
+  }
+
+  .form-container {
+    .form-group {
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        color: #333;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .input-field {
+        width: 100% !important;
+      }
+
+      :deep(.el-input__inner),
+      :deep(.el-input__wrapper),
+      :deep(.el-date-editor.el-input),
+      :deep(.el-cascader),
+      :deep(.el-select) {
+        height: 40px !important;
+        font-size: 14px;
+      }
+
+      :deep(.el-input__wrapper) {
+        background-color: #fff !important;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        box-shadow: none !important;
+
+        &:hover {
+          border-color: #8b7355;
+        }
+
+        &.is-focus {
+          border-color: #8b7355;
+          box-shadow: 0 0 0 1px #8b7355 !important;
+        }
+      }
+
+      .radio-group {
+        padding: 8px 0;
+
+        :deep(.el-radio__label) {
+          font-size: 14px;
+        }
+      }
+    }
+
+    .form-row {
+      margin-bottom: 20px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .half {
+        width: 100%;
+      }
+    }
+
+    .submit-btn {
+      width: 150px;
+      height: 40px;
+      font-size: 13px;
+      font-weight: 500;
+      margin: 24px auto 0;
+      border-radius: 40px;
+      background-color: #8b7355 !important;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover {
+        background-color: #7a6445 !important;
+      }
+    }
+
+    .hint {
+      text-align: center;
+      color: #666;
+      font-size: 13px;
+      margin-top: 16px;
+    }
+  }
+
+  .result-container {
+    margin: 40px auto;
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+
+      h2 {
+        font-size: 20px;
+        font-weight: 500;
+        color: #333;
+        margin: 0;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 12px;
+
+        .action-btn {
+          height: 32px;
+          padding: 0 16px;
+          font-size: 13px;
+          border-radius: 16px;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+      }
+    }
+
+    .result-meta {
+      color: #666;
+      font-size: 13px;
+      margin-bottom: 24px;
+    }
+
+    .result-content {
+      display: flex;
+      gap: 24px;
+
+      .result-left {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .result-right {
+        flex: 1;
+        min-width: 0;
+      }
+    }
+
+    .result-section {
+      background: #fff;
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 20px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .section-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 16px;
+        color: #333;
+        font-weight: 500;
+        margin-bottom: 16px;
+
+        i {
+          color: #8b7355;
+        }
+      }
+
+      .section-content {
+        color: #666;
+        font-size: 14px;
+        line-height: 1.6;
+
+        .birth-info {
+          color: #999;
+          margin-bottom: 12px;
+        }
+
+        .destiny-text {
+          margin-bottom: 8px;
+        }
+
+        .destiny-type {
+          color: #8b7355;
+          margin-top: 12px;
+        }
+
+        p {
+          margin-bottom: 12px;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+
+        .sub-section {
+          margin-bottom: 20px;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+
+          h4 {
+            color: #333;
+            font-size: 14px;
+            font-weight: 500;
+            margin: 0 0 8px 0;
+          }
+        }
+
+        .sub-title {
+          color: #333;
+          font-weight: 500;
+          margin: 16px 0 8px;
+
+          &:first-child {
+            margin-top: 0;
+          }
+        }
+
+        .career-grid {
+          display: flex;
+          gap: 24px;
+          margin-bottom: 24px;
+
+          .career-column {
+            flex: 1;
+
+            h4 {
+              color: #333;
+              font-size: 14px;
+              font-weight: 500;
+              margin: 0 0 12px 0;
+            }
+
+            .career-item {
+              background: rgba(139, 115, 85, 0.05);
+              padding: 12px;
+              border-radius: 6px;
+              margin-bottom: 8px;
+
+              &:last-child {
+                margin-bottom: 0;
+              }
+
+              .item-title {
+                color: #333;
+                font-size: 14px;
+                margin-bottom: 4px;
+              }
+
+              .item-desc {
+                color: #666;
+                font-size: 12px;
+              }
+            }
+          }
+        }
+
+        .tips-section {
+          h4 {
+            color: #333;
+            font-size: 14px;
+            font-weight: 500;
+            margin: 0 0 12px 0;
+          }
+
+          ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+
+            li {
+              position: relative;
+              padding-left: 12px;
+              margin-bottom: 8px;
+              font-size: 13px;
+
+              &:last-child {
+                margin-bottom: 0;
+              }
+
+              &::before {
+                content: "";
+                position: absolute;
+                left: 0;
+                top: 8px;
+                width: 4px;
+                height: 4px;
+                border-radius: 50%;
+                background-color: #8b7355;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .image-container {
+    margin: 40px auto;
+    max-width: 1000px;
+    background-color: #faf7f2;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+
+    .image-wrapper {
+      display: flex;
+      gap: 40px;
+      align-items: center;
+
+      .destiny-image {
+        width: 400px;
+        height: 600px;
+        border-radius: 8px;
+        object-fit: cover;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .image-info {
+        flex: 1;
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+        h3 {
+          font-size: 28px;
+          color: #8b7355;
+          margin-bottom: 24px;
+          text-align: center;
+          font-weight: 600;
+        }
+
+        .personality-info {
+          margin-bottom: 30px;
+          padding: 20px;
+          background: rgba(139, 115, 85, 0.05);
+          border-radius: 8px;
+
+          p {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 12px;
+
+            &.info2 {
+              white-space: pre-line;
+              color: #666;
+              font-size: 15px;
+            }
+          }
+        }
+
+        .luck-info {
+          h4 {
+            font-size: 20px;
+            color: #8b7355;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 500;
+          }
+
+          .luck-item {
+            margin-bottom: 24px;
+            padding: 16px;
+            background: #fff;
+            border-radius: 8px;
+            border: 1px solid rgba(139, 115, 85, 0.1);
+
+            h5 {
+              font-size: 18px;
+              color: #8b7355;
+              margin-bottom: 12px;
+              font-weight: 500;
+            }
+
+            p {
+              font-size: 15px;
+              line-height: 1.8;
+              color: #666;
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
-h2, h3 {
-  color: #2c3e50;
-  text-align: center;
-  margin-bottom: 20px;
-  font-weight: 600;
-}
-
-.current-bazi, .calculator {
-  margin: 15px 0;
-  padding: 15px;
-  border: none;
-  border-radius: 12px;
-  background: white;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-}
-
-.bazi-result {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin: 20px 0;
-  flex-wrap: wrap;
-}
-
-.pillar {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 15px;
-  border: 1px solid #eef2f7;
-  border-radius: 12px;
-  min-width: 100px;
-  background: #ffffff;
-  transition: all 0.3s ease;
-}
-
-.pillar:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-.label {
-  font-size: 14px;
-  color: #64748b;
-  margin-bottom: 8px;
-  font-weight: 500;
-}
-
-.value {
-  font-size: 24px;
-  font-weight: 600;
-  color: #1e293b;
-}
-
-.solar-time-info {
-  margin: 20px 0;
+.destiny-result {
+  max-width: 1200px;
+  margin: 40px auto;
   padding: 20px;
-  background: #f8fafc;
-  border-radius: 12px;
-  text-align: center;
-  font-size: 16px;
-  color: #475569;
-  border: 1px solid #e2e8f0;
+
+  .result-header {
+    margin-bottom: 30px;
+    
+    h2 {
+      font-size: 24px;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .result-time {
+      color: #999;
+      font-size: 14px;
+    }
+  }
+
+  .result-sections {
+    display: flex;
+    gap: 24px;
+
+    .left-section, .right-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .section {
+      background: #faf7f2;
+      border-radius: 12px;
+      padding: 24px;
+
+      .section-icon {
+        font-size: 20px;
+        margin-bottom: 12px;
+      }
+
+      .section-title {
+        font-size: 18px;
+        color: #8b7355;
+        margin-bottom: 20px;
+        font-weight: 500;
+      }
+
+      .section-content {
+        .birth-info {
+          color: #999;
+          margin-bottom: 16px;
+          font-size: 14px;
+        }
+
+        .info-item {
+          margin-bottom: 12px;
+          color: #333;
+          line-height: 1.6;
+        }
+
+        .info-detail {
+          color: #666;
+          line-height: 1.8;
+          margin-top: 16px;
+          white-space: pre-line;
+        }
+
+        .relation-group {
+          margin-bottom: 24px;
+
+          .group-title {
+            color: #8b7355;
+            font-size: 16px;
+            margin-bottom: 12px;
+          }
+
+          .relation-item {
+            color: #666;
+            margin-bottom: 8px;
+            padding-left: 12px;
+            position: relative;
+
+            &:before {
+              content: "•";
+              position: absolute;
+              left: 0;
+              color: #8b7355;
+            }
+          }
+        }
+
+        .fortune-item {
+          margin-bottom: 20px;
+
+          .fortune-title {
+            color: #8b7355;
+            font-size: 16px;
+            margin-bottom: 8px;
+          }
+
+          .fortune-desc {
+            color: #666;
+            line-height: 1.6;
+          }
+        }
+
+        .advice-group {
+          margin-bottom: 24px;
+
+          .advice-title {
+            color: #8b7355;
+            font-size: 16px;
+            margin-bottom: 12px;
+          }
+
+          .advice-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+
+            .tag-item {
+              background: #fff;
+              padding: 6px 12px;
+              border-radius: 16px;
+              font-size: 14px;
+              color: #666;
+              border: 1px solid rgba(139, 115, 85, 0.2);
+            }
+          }
+
+          .tips-items {
+            .tip-item {
+              color: #666;
+              margin-bottom: 8px;
+              padding-left: 12px;
+              position: relative;
+
+              &:before {
+                content: "•";
+                position: absolute;
+                left: 0;
+                color: #8b7355;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
-.location-info {
-  margin-top: 15px;
-  font-size: 14px;
-  color: #64748b;
-  line-height: 1.8;
-}
-
-.strength-info {
-  margin: 25px 0;
-  padding: 25px;
-  background: #f8fafc;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
-}
-
-.strength-analysis {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 25px;
-  margin-top: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.strength-judgment {
-  margin-bottom: 25px;
-  padding: 20px;
-  background: #f8fafc;
-  border-radius: 10px;
-}
-
-.judgment-item {
-  margin-bottom: 15px;
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  background: white;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-}
-
-.judgment-item .label {
-  font-weight: 600;
-  min-width: 100px;
-  color: #475569;
-}
-
-.judgment-item .value {
-  color: #1e293b;
-  font-size: 16px;
-}
-
-.judgment-item .score {
-  font-size: 18px;
-  font-weight: 600;
-  color: #3b82f6;
-}
-
-.strength-weights {
-  margin-top: 25px;
-  padding: 20px;
-  background: #f8fafc;
-  border-radius: 12px;
-}
-
-.strength-weights h4 {
-  margin: 0 0 20px 0;
-  color: #1e293b;
-  text-align: center;
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.weights-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 15px;
-}
-
-.weight-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 12px;
-  background: white;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  transition: all 0.2s ease;
-}
-
-.weight-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-}
-
-.weight-label {
-  font-size: 14px;
-  color: #64748b;
-  margin-bottom: 6px;
-  font-weight: 500;
-}
-
-.weight-value {
-  font-weight: 600;
-  font-size: 16px;
-}
-
-.weight-value.positive {
-  color: #22c55e;
-}
-
-.weight-value.negative {
-  color: #ef4444;
-}
-
-.weight-value.neutral {
-  color: #f59e0b;
-}
-
-.form-group {
-  margin: 20px 0;
-}
-
-input[type="datetime-local"],
-input[type="text"] {
-  padding: 12px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  width: 100%;
-  font-size: 15px;
-  transition: all 0.2s ease;
-}
-
-input[type="datetime-local"]:focus,
-input[type="text"]:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-button[type="submit"] {
-  padding: 14px 24px;
-  background-color: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  width: 100%;
-  font-size: 16px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-button[type="submit"]:hover:not(:disabled) {
-  background-color: #2563eb;
-  transform: translateY(-1px);
-}
-
-button[type="submit"]:disabled {
-  background-color: #94a3b8;
-  cursor: not-allowed;
-}
-
-.city-selector {
-  margin: 25px 0;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 25px;
-  background: #f8fafc;
-}
-
-.tabs {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 20px;
-  border-bottom: 1px solid #e2e8f0;
-  padding-bottom: 15px;
-}
-
-.tab-btn {
-  flex: 1;
-  padding: 12px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  background: white;
-  color: #64748b;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 15px;
-  font-weight: 500;
-}
-
-.tab-btn.active {
-  background: #3b82f6;
-  color: white;
-  border-color: #3b82f6;
-}
-
-.tab-btn:hover:not(.active) {
-  background: #f1f5f9;
-}
-
-.city-selection {
-  display: flex;
-  gap: 25px;
-  margin-top: 20px;
-  height: 350px;
-}
-
-.province-list {
-  width: 180px;
-  border-right: 1px solid #e2e8f0;
-  overflow-y: auto;
-  padding-right: 15px;
-}
-
-.province-item {
-  padding: 14px 18px;
-  cursor: pointer;
-  transition: all 0.2s;
-  border-radius: 8px;
-  margin-bottom: 8px;
-  font-size: 15px;
-  color: #475569;
-}
-
-.province-item:hover {
-  background: #f1f5f9;
-}
-
-.province-item.active {
-  background: #dbeafe;
-  color: #3b82f6;
-  font-weight: 500;
-}
-
-.city-list {
-  flex: 1;
-  overflow-y: auto;
-  padding-right: 15px;
-}
-
-.city-item {
-  padding: 14px 18px;
-  cursor: pointer;
-  transition: all 0.2s;
-  border-radius: 8px;
-  margin-bottom: 8px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 15px;
-  color: #475569;
-  background: white;
-  border: 1px solid #e2e8f0;
-}
-
-.city-item:hover {
-  background: #f1f5f9;
-  transform: translateX(2px);
-}
-
-.city-item.active {
-  background: #dbeafe;
-  color: #3b82f6;
-  border-color: #3b82f6;
-  font-weight: 500;
-}
-
-.district-selector {
-  margin-top: 25px;
-  border-top: 1px solid #e2e8f0;
-  padding-top: 20px;
-}
-
-.district-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 15px;
-  max-height: 250px;
-  overflow-y: auto;
-}
-
-.district-item {
-  padding: 12px 18px;
-  cursor: pointer;
-  transition: all 0.2s;
-  border-radius: 8px;
-  text-align: center;
-  background: white;
-  border: 1px solid #e2e8f0;
-  color: #475569;
-}
-
-.district-item:hover {
-  background: #f1f5f9;
-  transform: translateY(-2px);
-}
-
-.district-item.active {
-  background: #dbeafe;
-  color: #3b82f6;
-  border-color: #3b82f6;
-  font-weight: 500;
-}
-
-.province {
-  color: #64748b;
-  font-size: 0.9em;
-}
-
-.search-results {
-  margin-top: 20px;
-  max-height: 350px;
-  overflow-y: auto;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  background: white;
-}
-
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
-/* 移动端适配 */
 @media (max-width: 768px) {
-  .container {
-    padding: 10px;
+  .result-container {
+    padding: 20px;
     width: 100%;
-    min-width: 0;
+    margin: 20px auto;
+
+    .result-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .result-content {
+      flex-direction: column;
+    }
+
+    .result-section {
+      padding: 20px;
+    }
+
+    .career-grid {
+      flex-direction: column;
+      gap: 16px;
+    }
   }
 
-  .current-bazi, .calculator {
-    margin: 10px 0;
-    padding: 10px;
-    width: 100%;
-    box-sizing: border-box;
+  .image-container {
+    padding: 20px;
+    margin: 20px auto;
+
+    .image-wrapper {
+      flex-direction: column;
+      gap: 20px;
+
+      .destiny-image {
+        width: 100%;
+        height: auto;
+        max-height: 500px;
+        margin-bottom: 20px;
+      }
+
+      .image-info {
+        padding: 15px;
+
+        h3 {
+          font-size: 24px;
+          margin-bottom: 20px;
+        }
+
+        .personality-info {
+          padding: 15px;
+          margin-bottom: 20px;
+
+          p {
+            font-size: 15px;
+            margin-bottom: 10px;
+          }
+        }
+
+        .luck-info {
+          h4 {
+            font-size: 18px;
+            margin-bottom: 15px;
+          }
+
+          .luck-item {
+            padding: 12px;
+            margin-bottom: 20px;
+
+            h5 {
+              font-size: 16px;
+              margin-bottom: 10px;
+            }
+
+            p {
+              font-size: 14px;
+            }
+          }
+        }
+      }
+    }
   }
 
-  .bazi-result {
-    gap: 10px;
-    margin: 10px 0;
-    width: 100%;
-    box-sizing: border-box;
+  .destiny-result {
+    padding: 16px;
+    
+    .result-sections {
+      flex-direction: column;
+    }
+
+    .section {
+      padding: 20px;
+    }
   }
-
-  .pillar {
-    min-width: 65px;
-    width: calc(25% - 8px);
-    padding: 8px;
-    box-sizing: border-box;
-  }
-
-  .solar-time-info,
-  .strength-info,
-  .strength-analysis,
-  .strength-judgment,
-  .strength-weights {
-    margin: 10px 0;
-    padding: 10px;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .judgment-item {
-    padding: 8px;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .judgment-item .label {
-    width: 100%;
-    min-width: 0;
-    margin-bottom: 4px;
-  }
-
-  .weights-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    width: 100%;
-  }
-
-  .weight-item {
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .city-selector {
-    margin: 10px 0;
-    padding: 10px;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .city-selection,
-  .province-list,
-  .city-list,
-  .district-list {
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .search-results {
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  input[type="datetime-local"],
-  input[type="text"] {
-    width: 100%;
-    box-sizing: border-box;
-  }
-}
-
-/* 超小屏幕适配 */
-@media (max-width: 360px) {
-  .container {
-    padding: 8px;
-  }
-
-  .pillar {
-    min-width: 60px;
-    width: calc(25% - 6px);
-    padding: 6px;
-  }
-
-  .weights-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 6px;
-  }
-
-  .weight-item {
-    padding: 6px;
-  }
-
-  .district-list {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 6px;
-  }
-
-  .judgment-item,
-  .city-item,
-  .province-item,
-  .district-item {
-    padding: 8px;
-  }
-}
-
-/* 添加全局盒模型设置 */
-* {
-  box-sizing: border-box;
-}
-
-/* 防止水平滚动 */
-html, body {
-  max-width: 100%;
-  overflow-x: hidden;
 }
 </style>
