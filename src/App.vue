@@ -15,13 +15,136 @@
 
       <div class="form-group">
         <label>出生地点*</label>
+        
+        <!-- 地理位置服务选择器 -->
+        <div class="location-service-selector">
+          <el-radio-group v-model="locationService" size="small" class="service-toggle">
+            <el-radio-button value="traditional">传统方案</el-radio-button>
+            <el-radio-button value="leaflet">国际方案</el-radio-button>
+          </el-radio-group>
+        </div>
+
+        <!-- 传统地理位置选择器 -->
         <CustomCascader
+          v-if="locationService === 'traditional'"
           v-model="location"
           :options="locationData"
           placeholder="请选择出生地点"
           class="input-field"
         />
+
+        <!-- Leaflet 国际地理位置选择器 -->
+        <div v-if="locationService === 'leaflet'" class="leaflet-location-container">
+          <el-row :gutter="10">
+            <el-col :span="8">
+              <el-select
+                v-model="leafletCountry"
+                placeholder="选择国家"
+                class="input-field"
+                @change="onCountryChange"
+              >
+                <el-option
+                  v-for="country in leafletCountries"
+                  :key="country"
+                  :label="country"
+                  :value="country"
+                />
+              </el-select>
+            </el-col>
+            <el-col :span="16">
+              <div class="city-input-container">
+                <el-select
+                  v-model="leafletCity"
+                  placeholder="选择城市或输入自定义城市"
+                  class="input-field"
+                  filterable
+                  allow-create
+                  @change="onCityChange"
+                  @blur="onCityInputBlur"
+                >
+                  <el-option
+                    v-for="city in leafletCities"
+                    :key="city.value"
+                    :label="city.label + (city.custom ? ' (自定义)' : '')"
+                    :value="city.value"
+                  />
+                </el-select>
+                <el-button 
+                  v-if="showAddCityButton"
+                  @click="showAddCityDialog"
+                  type="text"
+                  size="small"
+                  class="add-city-btn"
+                >
+                  添加城市
+                </el-button>
+              </div>
+            </el-col>
+          </el-row>
+          
+          <!-- 显示当前选择的坐标信息 -->
+          <div v-if="currentLeafletCoordinates" class="coordinates-display">
+            <small>坐标: {{ currentLeafletCoordinates.lat.toFixed(4) }}°N, {{ currentLeafletCoordinates.lng.toFixed(4) }}°E</small>
+          </div>
+        </div>
       </div>
+
+      <!-- 添加自定义城市对话框 -->
+      <el-dialog
+        v-model="addCityDialogVisible"
+        title="添加自定义城市"
+        width="500px"
+      >
+        <el-form :model="customCityForm" label-width="80px">
+          <el-form-item label="城市名称">
+            <el-input 
+              v-model="customCityForm.name" 
+              placeholder="请输入城市名称（如：Beijing, New York, Tokyo）" 
+            />
+          </el-form-item>
+          <el-form-item label="搜索">
+            <el-button 
+              type="primary" 
+              @click="searchCityCoordinates"
+              :loading="searchLoading"
+              style="width: 100%"
+            >
+              {{ searchLoading ? '正在搜索...' : '使用 Leaflet 搜索坐标' }}
+            </el-button>
+            <div v-if="searchResults.length > 0" class="search-results">
+              <div class="search-results-title">搜索结果（点击选择）：</div>
+              <div 
+                v-for="(result, index) in searchResults" 
+                :key="index"
+                class="search-result-item"
+                @click="selectSearchResult(result)"
+              >
+                <div class="result-name">{{ result.name }}</div>
+                <div class="result-coords">{{ result.lat.toFixed(4) }}°N, {{ result.lng.toFixed(4) }}°E</div>
+              </div>
+            </div>
+          </el-form-item>
+          <el-form-item label="选中坐标" v-if="customCityForm.lat && customCityForm.lng">
+            <div class="selected-coordinates">
+              <span>纬度: {{ customCityForm.lat.toFixed(4) }}°N</span>
+              <span style="margin-left: 20px;">经度: {{ customCityForm.lng.toFixed(4) }}°E</span>
+            </div>
+          </el-form-item>
+          <el-form-item v-if="searchError" label="错误">
+            <div class="search-error">{{ searchError }}</div>
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <el-button @click="addCityDialogVisible = false">取消</el-button>
+          <el-button 
+            type="primary" 
+            @click="addCustomCity"
+            :disabled="!customCityForm.lat || !customCityForm.lng"
+          >
+            确定添加
+          </el-button>
+        </template>
+      </el-dialog>
 
       <div class="form-row">
         <el-row :gutter="20">
@@ -166,7 +289,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, computed } from "vue";
 import { ElMessage } from "element-plus";
 import "element-plus/dist/index.css";
 import { locationData } from "./data/locationData";
@@ -176,6 +299,18 @@ import { getLocationInfo } from "./data/locationData";
 import { calculateBaZi } from "./utils/bazi";
 import { analyzeStrength } from "./utils/strength";
 import { destinyData } from "./data/destinyData";
+// 导入新的 Leaflet 地理位置服务
+import { 
+  getCountries, 
+  getCitiesByCountry, 
+  getCityCoordinates, 
+  addCustomCity as addLeafletCustomCity,
+  isValidCoordinates,
+  searchCityWithLeaflet,
+  getCustomCities
+} from "./utils/leafletLocation";
+// 导入新的 Suncalc 太阳时计算
+import { calculateSolarTimeCompat } from "./utils/suncalcSolar";
 
 const birthDate = ref("");
 const location = ref([]);
@@ -186,6 +321,36 @@ const destinyInfo = ref(null);
 const baziInfo = ref({
   bazi: '',
   solarTime: ''
+});
+
+// 地理位置服务选择
+const locationService = ref('traditional'); // 'traditional' 或 'leaflet'
+
+// Leaflet 地理位置相关数据
+const leafletCountry = ref('');
+const leafletCity = ref('');
+const leafletCountries = ref(getCountries());
+const leafletCities = ref([]);
+const currentLeafletCoordinates = ref(null);
+
+// 自定义城市对话框
+const addCityDialogVisible = ref(false);
+const customCityForm = ref({
+  name: '',
+  lat: null,
+  lng: null
+});
+const searchLoading = ref(false);
+const searchResults = ref([]);
+const searchError = ref('');
+
+// 计算属性：获取自定义城市列表
+const customCities = computed(() => getCustomCities());
+
+// 计算属性：是否显示添加城市按钮
+const showAddCityButton = computed(() => {
+  return leafletCountry.value && (!leafletCity.value || 
+    !leafletCities.value.find(city => city.value === leafletCity.value));
 });
 
 const locationProps = {
@@ -227,6 +392,157 @@ onUnmounted(() => {
   window.removeEventListener("resize", checkMobile);
 });
 
+// Leaflet 地理位置服务方法
+const onCountryChange = (country) => {
+  console.log('Country changed:', country);
+  leafletCity.value = '';
+  currentLeafletCoordinates.value = null;
+  
+  if (country) {
+    const cityNames = getCitiesByCountry(country);
+    leafletCities.value = cityNames.map(cityName => {
+      // 检查是否为自定义城市
+      const isCustom = customCities.value.some(city => 
+        city.name === cityName && city.country === country
+      );
+      
+      return {
+        value: cityName,
+        label: cityName,
+        custom: isCustom
+      };
+    });
+  } else {
+    leafletCities.value = [];
+  }
+};
+
+const onCityChange = async (cityName) => {
+  console.log('City changed:', cityName);
+  if (cityName && leafletCountry.value) {
+    try {
+      // 显示加载状态
+      currentLeafletCoordinates.value = null;
+      
+      const coordinates = await getCityCoordinates(cityName, leafletCountry.value);
+      if (coordinates) {
+        currentLeafletCoordinates.value = coordinates;
+        console.log('Coordinates found:', coordinates);
+      } else {
+        console.log('Coordinates not found for:', cityName);
+        ElMessage.warning(`无法获取 ${cityName} 的坐标信息`);
+      }
+    } catch (error) {
+      console.error('Error getting city coordinates:', error);
+      ElMessage.error('获取城市坐标失败，请检查网络连接');
+      currentLeafletCoordinates.value = null;
+    }
+  } else {
+    currentLeafletCoordinates.value = null;
+  }
+};
+
+const onCityInputBlur = () => {
+  // 当用户输入自定义城市名时，清除坐标直到用户确认添加
+  if (leafletCity.value && !leafletCities.value.find(city => city.value === leafletCity.value)) {
+    currentLeafletCoordinates.value = null;
+  }
+};
+
+const showAddCityDialog = () => {
+  customCityForm.value = {
+    name: leafletCity.value || '',
+    lat: null,
+    lng: null
+  };
+  searchResults.value = [];
+  searchError.value = '';
+  addCityDialogVisible.value = true;
+};
+
+// 使用 Leaflet 搜索城市坐标
+const searchCityCoordinates = async () => {
+  if (!customCityForm.value.name.trim()) {
+    ElMessage.warning('请输入城市名称');
+    return;
+  }
+  
+  searchLoading.value = true;
+  searchError.value = '';
+  searchResults.value = [];
+  
+  try {
+    const results = await searchCityWithLeaflet(customCityForm.value.name);
+    
+    if (results.length === 0) {
+      searchError.value = '未找到相关城市，请检查城市名称拼写';
+      ElMessage.warning('未找到相关城市');
+    } else {
+      searchResults.value = results;
+      ElMessage.success(`找到 ${results.length} 个结果，请选择正确的城市`);
+    }
+  } catch (error) {
+    console.error('搜索城市坐标失败：', error);
+    searchError.value = '搜索失败，请检查网络连接或稍后重试';
+    ElMessage.error('搜索失败，请检查网络连接');
+  } finally {
+    searchLoading.value = false;
+  }
+};
+
+// 选择搜索结果
+const selectSearchResult = (result) => {
+  customCityForm.value.lat = result.lat;
+  customCityForm.value.lng = result.lng;
+  
+  // 如果用户没有输入城市名称，使用搜索结果中的城市名
+  if (!customCityForm.value.name.trim()) {
+    customCityForm.value.name = result.city || result.name.split(',')[0];
+  }
+  
+  searchResults.value = [];
+  ElMessage.success('坐标已选中');
+};
+
+const addCustomCity = () => {
+  const { name, lat, lng } = customCityForm.value;
+  
+  // 验证输入
+  if (!name || !name.trim()) {
+    ElMessage.warning('请输入城市名称');
+    return;
+  }
+  
+  if (!lat || !lng || !isValidCoordinates(lat, lng)) {
+    ElMessage.warning('请先搜索并选择有效的坐标');
+    return;
+  }
+  
+  if (!leafletCountry.value) {
+    ElMessage.warning('请先选择国家');
+    return;
+  }
+  
+  // 添加自定义城市
+  const success = addLeafletCustomCity(name.trim(), leafletCountry.value, lat, lng);
+  
+  if (success) {
+    ElMessage.success('自定义城市添加成功');
+    
+    // 更新城市列表
+    onCountryChange(leafletCountry.value);
+    
+    // 选择新添加的城市
+    leafletCity.value = name.trim();
+    currentLeafletCoordinates.value = { lat, lng };
+    
+    // 关闭对话框
+    addCityDialogVisible.value = false;
+  } else {
+    ElMessage.error('添加自定义城市失败，可能该城市已存在');
+  }
+};
+
 const handleSubmit = () => {
   if (!birthDate.value) {
     ElMessage.warning("请选择出生日期");
@@ -235,6 +551,41 @@ const handleSubmit = () => {
   if (!gender.value) {
     ElMessage.warning("请选择性别");
     return;
+  }
+
+  // 验证地理位置信息
+  let coordinates = null;
+  let locationName = '';
+  let useNewSolarMethod = false;
+
+  if (locationService.value === 'traditional') {
+    // 使用传统方案
+    if (location.value.length > 0) {
+      const selectedCity = location.value[location.value.length - 1];
+      const locationInfo = getLocationInfo(selectedCity);
+      if (locationInfo?.coordinates) {
+        coordinates = {
+          lat: locationInfo.coordinates.lat,
+          lng: locationInfo.coordinates.lng
+        };
+        locationName = `${locationInfo.country} ${locationInfo.province} ${locationInfo.city}`;
+      }
+    }
+  } else if (locationService.value === 'leaflet') {
+    // 使用 Leaflet 国际方案
+    if (!leafletCountry.value || !leafletCity.value) {
+      ElMessage.warning("请选择国家和城市");
+      return;
+    }
+    
+    if (!currentLeafletCoordinates.value) {
+      ElMessage.warning("无法获取所选城市的坐标信息，请检查选择或添加自定义城市");
+      return;
+    }
+    
+    coordinates = currentLeafletCoordinates.value;
+    locationName = `${leafletCountry.value} ${leafletCity.value}`;
+    useNewSolarMethod = true; // 使用新的 Suncalc 方法
   }
 
   // 解析时辰，获取中间值
@@ -253,27 +604,48 @@ const handleSubmit = () => {
   const [year, month, day] = birthDate.value.split('-').map(Number);
   const date = new Date(year, month - 1, day, hourValue, 0, 0);
 
-  // 获取选中的城市信息或使用默认的北京经纬度
-  let locationInfo;
-  if (location.value.length > 0) {
-    const selectedCity = location.value[location.value.length - 1];
-    locationInfo = getLocationInfo(selectedCity);
-  }
-  
-  // 如果没有选择城市或无法获取城市信息，直接使用用户选择的时间
+  // 计算真太阳时
   let targetDate = date;
-  if (locationInfo?.coordinates) {
-    // 计算真太阳时
-    targetDate = calculateSolarTime(
-      date,
-      locationInfo.coordinates.lng,
-      locationInfo.coordinates.lat,
-      true
-    );
+  let solarCalculationMethod = '标准时间';
+  
+  if (coordinates) {
+    try {
+      if (useNewSolarMethod) {
+        // 使用新的 Suncalc 方法
+        targetDate = calculateSolarTimeCompat(date, coordinates.lng, coordinates.lat, true);
+        solarCalculationMethod = 'Suncalc方法';
+        console.log('使用 Suncalc 方法计算真太阳时');
+      } else {
+        // 使用传统方法
+        targetDate = calculateSolarTime(date, coordinates.lng, coordinates.lat, true);
+        solarCalculationMethod = '传统方法';
+        console.log('使用传统方法计算真太阳时');
+      }
+    } catch (error) {
+      console.error('太阳时计算失败，使用备用方案：', error);
+      ElMessage.warning('太阳时计算失败，使用备用方案');
+      
+      // 备用方案：如果新方法失败，尝试传统方法
+      if (useNewSolarMethod) {
+        try {
+          targetDate = calculateSolarTime(date, coordinates.lng, coordinates.lat, true);
+          solarCalculationMethod = '传统方法(备用)';
+          console.log('备用方案：使用传统方法');
+        } catch (backupError) {
+          console.error('备用方案也失败，使用原始时间：', backupError);
+          targetDate = date;
+          solarCalculationMethod = '原始时间(备用)';
+        }
+      } else {
+        // 如果传统方法失败，使用原始时间
+        targetDate = date;
+        solarCalculationMethod = '原始时间(备用)';
+      }
+    }
   }
 
   // 计算八字
-  const bazi = calculateBaZi(targetDate, !!locationInfo?.coordinates, locationInfo?.coordinates?.lng, locationInfo?.coordinates?.lat);
+  const bazi = calculateBaZi(targetDate, !!coordinates, coordinates?.lng, coordinates?.lat);
   
   // 更新八字信息
   baziInfo.value = {
@@ -288,12 +660,15 @@ const handleSubmit = () => {
   destinyInfo.value = destinyData.find(item => item.name === strength);
   
   console.log('命理信息：', {
+    地理位置服务: locationService.value === 'traditional' ? '传统方案' : 'Leaflet国际方案',
     选择时间: date.toLocaleString(),
-    经纬度: locationInfo?.coordinates ? `${locationInfo.coordinates.lng.toFixed(4)}°E, ${locationInfo.coordinates.lat.toFixed(4)}°N` : '未选择地区',
+    地点: locationName || '未选择地区',
+    经纬度: coordinates ? `${coordinates.lng.toFixed(4)}°E, ${coordinates.lat.toFixed(4)}°N` : '未获取',
+    计算方法: solarCalculationMethod,
     真太阳时: targetDate.toLocaleString(),
     八字: `${bazi.年柱} ${bazi.月柱} ${bazi.日柱} ${bazi.时柱}`,
     身强身弱: strength,
-    命理数据: destinyInfo.value || '未找到对应的命理数据'
+    命理数据: destinyInfo.value ? destinyInfo.value.name : '未找到对应的命理数据'
   });
 };
 
@@ -403,11 +778,150 @@ const getImageUrl = (name) => {
       }
     }
 
-    .hint {
-      text-align: center;
-      color: #666;
-      font-size: 13px;
-      margin-top: 16px;
+          .hint {
+        text-align: center;
+        color: #666;
+        font-size: 13px;
+        margin-top: 16px;
+      }
+
+      /* Leaflet 地理位置服务样式 */
+      .location-service-selector {
+        margin-bottom: 12px;
+
+        .service-toggle {
+          width: 100%;
+          display: flex;
+          
+          :deep(.el-radio-button) {
+            flex: 1;
+          }
+          
+          :deep(.el-radio-button__inner) {
+            width: 100%;
+            text-align: center;
+            border-radius: 6px;
+            font-size: 14px;
+          }
+          
+          :deep(.el-radio-button:first-child .el-radio-button__inner) {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+          }
+          
+          :deep(.el-radio-button:last-child .el-radio-button__inner) {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+          }
+        }
+      }
+
+      .leaflet-location-container {
+        .city-input-container {
+          position: relative;
+          margin-bottom: 8px;
+
+          .add-city-btn {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            margin-top: 6px;
+            padding: 4px 8px;
+            color: #8b7355;
+            font-size: 12px;
+            border: 1px solid rgba(139, 115, 85, 0.3);
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(4px);
+            transition: all 0.2s ease;
+
+            &:hover {
+              color: #7a6445;
+              border-color: #7a6445;
+              background: rgba(255, 255, 255, 1);
+              transform: translateY(-1px);
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+          }
+        }
+
+        .coordinates-display {
+          margin-top: 12px;
+          padding: 8px 12px;
+          background: linear-gradient(135deg, rgba(139, 115, 85, 0.08), rgba(139, 115, 85, 0.12));
+          border-radius: 6px;
+          border: 1px solid rgba(139, 115, 85, 0.15);
+          backdrop-filter: blur(4px);
+          
+          small {
+            color: #8b7355;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            
+            &:before {
+              content: "📍";
+              font-size: 14px;
+            }
+          }
+        }
+      }
+
+      /* 自定义城市对话框样式 */
+      .search-results {
+        margin-top: 12px;
+        border: 1px solid #e4e7ed;
+        border-radius: 4px;
+        max-height: 200px;
+        overflow-y: auto;
+
+        .search-results-title {
+          padding: 8px 12px;
+          background: #f5f7fa;
+          font-size: 13px;
+          color: #606266;
+          border-bottom: 1px solid #e4e7ed;
+        }
+
+        .search-result-item {
+          padding: 8px 12px;
+          border-bottom: 1px solid #f0f0f0;
+          cursor: pointer;
+          transition: background-color 0.2s;
+
+          &:hover {
+            background-color: #f5f7fa;
+          }
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+          .result-name {
+            font-size: 14px;
+            color: #303133;
+            margin-bottom: 2px;
+          }
+
+          .result-coords {
+            font-size: 12px;
+            color: #909399;
+          }
+        }
+      }
+
+      .selected-coordinates {
+        color: #8b7355;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .search-error {
+        color: #f56c6c;
+        font-size: 13px;
+      }
     }
   }
 
@@ -708,7 +1222,6 @@ const getImageUrl = (name) => {
       }
     }
   }
-}
 
 .destiny-result {
   max-width: 1200px;
@@ -863,6 +1376,81 @@ const getImageUrl = (name) => {
 }
 
 @media (max-width: 768px) {
+  .container {
+    .form-container {
+      margin: 20px auto;
+      padding: 20px 16px;
+      width: 95%;
+      
+      .form-group {
+        padding: 12px;
+        
+        /* 移动端地理位置服务改进 */
+        .location-service-selector {
+          margin-bottom: 16px;
+          
+          .service-toggle {
+            :deep(.el-radio-button__inner) {
+              font-size: 13px;
+              padding: 8px 12px;
+            }
+          }
+        }
+        
+        .leaflet-location-container {
+          :deep(.el-row) {
+            margin: 0 !important;
+          }
+          
+          :deep(.el-col) {
+            padding: 0 4px !important;
+            
+            &:first-child {
+              padding-left: 0 !important;
+            }
+            
+            &:last-child {
+              padding-right: 0 !important;
+            }
+          }
+          
+          .city-input-container {
+            margin-bottom: 12px;
+            
+            .add-city-btn {
+              position: static;
+              width: 100%;
+              margin-top: 8px;
+              margin-bottom: 8px;
+              transform: none !important;
+              
+              &:hover {
+                transform: none !important;
+              }
+            }
+          }
+          
+          .coordinates-display {
+            margin-top: 8px;
+            padding: 6px 8px;
+            
+            small {
+              font-size: 12px;
+              flex-direction: column;
+              align-items: flex-start;
+              gap: 2px;
+              
+              &:before {
+                content: "📍 坐标信息:";
+                font-size: 12px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
   .result-container {
     padding: 20px;
     width: 100%;
