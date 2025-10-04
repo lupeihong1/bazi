@@ -28,7 +28,7 @@ export const destinyDataEn = [
           desc: "You often feel a wave of anxiety after making major decisions and tend to bottle up stress rather than share it. To protect your mental health, find active outlets for release: competitive sports like fencing or rock climbing can burn off excess tension, and strategy games let you satisfy your need for control in a safe way. Regularly venting your drive through such channels keeps you emotionally balanced.",
         },
         {
-          title: "Career Pathways (Where You Flourish / Where Energy Feels Drained)",
+          title: "Career Pathways",
           desc: "Recommended Industries: Judiciary & Public Safety: Judge, prosecutor, police officer, military officer, firefighter. Metal & Precision Manufacturing: Machinery, automotive, aerospace, semiconductors, precision instruments. Management & Consulting: Strategic consulting, corporate management, auditing. Technology & Internet: Software development, artificial intelligence, big data, gaming, social media. Education & Training: Higher education, vocational training, online education. Creative & Media: Advertising, PR, film production, design, publishing, entertainment. Real Estate & Construction: Property development, architecture, civil engineering, interior design. Finance & Investment: Banking, securities, investment funds, asset management, insurance. Mining & Agriculture: Mineral exploration, mining operations, modern farming, land management. Retail & Trade: Commodity trading, brand retail (especially brick-and-mortar stores). Industries to Avoid: Fishing & Aquaculture: Routine, patience-heavy work. Maritime Shipping: Slow-moving industry. Psychological Counseling: Requires delicate sensitivity. Social Work & Nonprofits: Bureaucratic pace. Forestry: Slow growth and detail work. Textile & Garment Manufacturing: Repetitive processes.",
         },
       ],
@@ -991,7 +991,7 @@ Quietly Independent: You might seem to go with the flow, but you hold firm opini
     name: "Empowered Gui Water – The Sage",
     personality: {
       info1: [
-        "Gui Water is likened to rain and dew. When empowered (strong in energy), Empowered Gui Water surges freely, gifting it with sharp intelligence and insight to keenly sense its environment and emerging trends. Its journey is to realize that countless raindrops need guidance to converge into a river before they can wield great power.",
+        "Gui Water is likened to rain and dew. When empowered (strong in energy), Empowered Gui Water surges freely, gifting it with sharp intelligence and insight to keenly sense its environment and emerging trends. Its journey is to realize that countless raindrops need guidance to converge into a river before they can wield great power.True strength isn't found in wild, scattered torrents, but in guiding, integrating, and pooling its talents. By focusing its flow, even gentle drizzles of effort can unite into an unstoppable flood.",
       ],
       info2: `Quick Insight: Your mind is agile and perceptive. You adapt swiftly and excel at strategizing, easily seeing the bigger picture.
 Resilient & Decisive: Inside, you're tenacious and bold. You act with confidence and power, though for major decisions it's wise to gather input from others and remain flexible.
@@ -1031,15 +1031,14 @@ Subtle Authority: You may appear carefree, but you carry a strong desire to be i
     },
     celebrities: {
       international: [
-        "Mother Teresa: Nobel Peace Prize winner",
-        "Hayao Miyazaki: Animation master, conveying environmental concepts, personally donating to protect Japanese natural forests and cultural heritage",
-        "Simone de Beauvoir: Author of the feminist classic 'The Second Sex', revealing the truth that 'women are socially constructed' and promoting global gender equality movements",
+        "Mother Teresa: Nobel Peace Prize laureate, remembered worldwide for her unwavering compassion and humanitarian service.",
+        "Hayao Miyazaki: Legendary Japanese animator and filmmaker, whose works carry strong environmental themes; personally funded the preservation of forests and cultural heritage in Japan.",
+        "Simone de Beauvoir: Author of the feminist classic The Second Sex, who revealed how “woman is made, not born,” and became a global voice for gender equality.",
       ],
       domestic: [
-        "Wang Shi: Founder of Vanke",
-        "Wang Jianlin: Chairman of Wanda Group",
-        "Zhang Chaoyang: Founder of Sohu",
-        "Ba Jin: Writer, criticizing feudal ethics, advocating the establishment of China's Modern Literature Museum in his later years",
+        "Wang Shi: Founder of Vanke, recognized as a pioneering entrepreneur who reshaped China’s real estate industry.",
+        "Wang Jianlin: Chairman of Wanda Group, a business titan whose empire spans real estate, entertainment, and global investments.",
+        "Zhang Chaoyang: Founder of Sohu, one of China’s earliest internet leaders who helped shape the country’s digital age.",
       ],
     },
     luckSuggestion: {

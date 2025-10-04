@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <!-- 语言切换器 -->
-    <LanguageSwitcher />
+    <!-- <LanguageSwitcher /> -->
     
     <div class="form-container">
       <div class="form-group">
@@ -317,11 +317,16 @@
                 </div>
               </div>
             </template>
-            <!-- 英文模式：不区分，只显示 international -->
+            <!-- 英文模式：不区分，显示所有名人但不显示分组标题 -->
             <template v-else>
               <div class="celebrities-group">
                 <div class="celebrities-items">
-                  <div v-for="(celebrity, index) in destinyInfo.celebrities.international" :key="index" class="celebrity-item">
+                  <!-- 显示国际名人 -->
+                  <div v-for="(celebrity, index) in destinyInfo.celebrities.international" :key="`int-${index}`" class="celebrity-item">
+                    {{ celebrity }}
+                  </div>
+                  <!-- 显示国内名人 -->
+                  <div v-for="(celebrity, index) in destinyInfo.celebrities.domestic" :key="`dom-${index}`" class="celebrity-item">
                     {{ celebrity }}
                   </div>
                 </div>
