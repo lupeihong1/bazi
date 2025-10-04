@@ -1,26 +1,29 @@
 <template>
   <div class="container">
+    <!-- 语言切换器 -->
+    <LanguageSwitcher />
+    
     <div class="form-container">
       <div class="form-group">
-        <label>出生年/月/日*</label>
+        <label>{{ t('form.birthDate.label') }}*</label>
         <el-date-picker
           v-model="birthDate"
           type="date"
           class="input-field"
-          placeholder="选择出生日期"
+          :placeholder="t('form.birthDate.placeholder')"
           format="YYYY-MM-DD"
           value-format="YYYY-MM-DD"
         />
       </div>
 
       <div class="form-group">
-        <label>出生地点*</label>
+        <label>{{ t('form.birthPlace.label') }}*</label>
         
         <!-- 地理位置服务选择器（已隐藏，保留功能） -->
         <div class="location-service-selector" style="display: none;">
           <el-radio-group v-model="locationService" size="small" class="service-toggle">
-            <el-radio-button value="traditional">传统方案</el-radio-button>
-            <el-radio-button value="leaflet">国际方案</el-radio-button>
+            <el-radio-button value="traditional">{{ t('form.birthPlace.traditional') }}</el-radio-button>
+            <el-radio-button value="leaflet">{{ t('form.birthPlace.international') }}</el-radio-button>
           </el-radio-group>
         </div>
 
@@ -29,7 +32,7 @@
           v-if="locationService === 'traditional'"
           v-model="location"
           :options="locationData"
-          placeholder="请选择出生地点"
+          :placeholder="t('form.birthPlace.label')"
           class="input-field"
         />
 
@@ -39,7 +42,7 @@
             <el-col :span="8">
               <el-select
                 v-model="leafletCountry"
-                placeholder="选择国家"
+                :placeholder="t('form.birthPlace.country')"
                 class="input-field"
                 @change="onCountryChange"
               >
@@ -55,7 +58,7 @@
               <div class="city-input-container">
                 <el-select
                   v-model="leafletCity"
-                  placeholder="选择城市或输入自定义城市"
+                  :placeholder="t('form.birthPlace.city')"
                   class="input-field"
                   filterable
                   allow-create
@@ -65,7 +68,7 @@
                   <el-option
                     v-for="city in leafletCities"
                     :key="city.value"
-                    :label="city.label + (city.custom ? ' (自定义)' : '')"
+                    :label="city.label + (city.custom ? ' (custom)' : '')"
                     :value="city.value"
                   />
                 </el-select>
@@ -76,7 +79,7 @@
                   size="small"
                   class="add-city-btn"
                 >
-                  添加城市
+                  {{ t('form.birthPlace.addCity') }}
                 </el-button>
               </div>
             </el-col>
@@ -84,7 +87,7 @@
           
           <!-- 显示当前选择的坐标信息 -->
           <div v-if="currentLeafletCoordinates" class="coordinates-display">
-            <small>坐标: {{ currentLeafletCoordinates.lat.toFixed(4) }}°N, {{ currentLeafletCoordinates.lng.toFixed(4) }}°E</small>
+            <small>{{ t('form.birthPlace.coordinates') }}: {{ currentLeafletCoordinates.lat.toFixed(4) }}°N, {{ currentLeafletCoordinates.lng.toFixed(4) }}°E</small>
           </div>
         </div>
       </div>
@@ -92,27 +95,27 @@
       <!-- 添加自定义城市对话框 -->
       <el-dialog
         v-model="addCityDialogVisible"
-        title="添加自定义城市"
+        :title="t('dialog.addCity.title')"
         width="500px"
       >
         <el-form :model="customCityForm" label-width="80px">
-          <el-form-item label="城市名称">
+          <el-form-item :label="t('dialog.addCity.cityName')">
             <el-input 
               v-model="customCityForm.name" 
-              placeholder="请输入城市名称（如：Beijing, New York, Tokyo）" 
+              :placeholder="t('dialog.addCity.cityPlaceholder')" 
             />
           </el-form-item>
-          <el-form-item label="搜索">
+          <el-form-item :label="t('dialog.addCity.search')">
             <el-button 
               type="primary" 
               @click="searchCityCoordinates"
               :loading="searchLoading"
               style="width: 100%"
             >
-              {{ searchLoading ? '正在搜索...' : '使用 Leaflet 搜索坐标' }}
+              {{ searchLoading ? t('dialog.addCity.searching') : t('dialog.addCity.searchButton') }}
             </el-button>
             <div v-if="searchResults.length > 0" class="search-results">
-              <div class="search-results-title">搜索结果（点击选择）：</div>
+              <div class="search-results-title">{{ t('dialog.addCity.searchResults') }}</div>
               <div 
                 v-for="(result, index) in searchResults" 
                 :key="index"
@@ -124,34 +127,34 @@
               </div>
             </div>
           </el-form-item>
-          <el-form-item label="选中坐标" v-if="customCityForm.lat && customCityForm.lng">
+          <el-form-item :label="t('dialog.addCity.selectedCoords')" v-if="customCityForm.lat && customCityForm.lng">
             <div class="selected-coordinates">
-              <span>纬度: {{ customCityForm.lat.toFixed(4) }}°N</span>
-              <span style="margin-left: 20px;">经度: {{ customCityForm.lng.toFixed(4) }}°E</span>
+              <span>{{ t('dialog.addCity.latitude') }}: {{ customCityForm.lat.toFixed(4) }}°N</span>
+              <span style="margin-left: 20px;">{{ t('dialog.addCity.longitude') }}: {{ customCityForm.lng.toFixed(4) }}°E</span>
             </div>
           </el-form-item>
-          <el-form-item v-if="searchError" label="错误">
+          <el-form-item v-if="searchError" :label="t('dialog.addCity.error')">
             <div class="search-error">{{ searchError }}</div>
           </el-form-item>
         </el-form>
         <template #footer>
-          <el-button @click="addCityDialogVisible = false">取消</el-button>
+          <el-button @click="addCityDialogVisible = false">{{ t('dialog.addCity.cancel') }}</el-button>
           <el-button 
             type="primary" 
             @click="addCustomCity"
             :disabled="!customCityForm.lat || !customCityForm.lng"
           >
-            确定添加
+            {{ t('dialog.addCity.confirm') }}
           </el-button>
         </template>
       </el-dialog>
 
       <div class="form-group">
-        <label>出生时辰</label>
+        <label>{{ t('form.birthTime.label') }}</label>
         <el-select
           v-model="birthHour"
           class="input-field"
-          placeholder="请选择时辰（可选）"
+          :placeholder="t('form.birthTime.placeholder')"
           clearable
         >
           <el-option
@@ -161,41 +164,41 @@
             :value="hour.value"
           />
         </el-select>
-        <div class="form-hint">时辰可选填，不确定可留空，填写可提高结果测算准确度，不填运算时默认午时</div>
+        <div class="form-hint">{{ t('form.birthTime.hint') }}</div>
       </div>
 
       <div class="form-group">
-        <label>性别</label>
+        <label>{{ t('form.gender.label') }}</label>
         <div class="radio-group">
           <el-radio-group v-model="gender">
-            <el-radio :value="'male'">男</el-radio>
-            <el-radio :value="'female'">女</el-radio>
-            <el-radio :value="'unknown'">不方便透露</el-radio>
+            <el-radio :value="'male'">{{ t('form.gender.male') }}</el-radio>
+            <el-radio :value="'female'">{{ t('form.gender.female') }}</el-radio>
+            <el-radio :value="'unknown'">{{ t('form.gender.unknown') }}</el-radio>
           </el-radio-group>
         </div>
       </div>
 
       <el-button type="primary" class="submit-btn" @click="handleSubmit">
-        开始测算
+        {{ t('common.submit') }}
       </el-button>
-      <p class="hint">知命未来运势，从了解自己开始</p>
+      <p class="hint">{{ t('common.hint') }}</p>
     </div>
 
     <div v-if="destinyInfo" class="destiny-result">
       <div class="result-header">
-        <h2>您的命理测算结果：{{ destinyInfo.key }} · {{ destinyInfo.name }}</h2>
-        <div class="result-time">测算时间：{{ new Date().toLocaleString() }}</div>
+        <h2>{{ t('result.title', { key: destinyInfo.key, name: destinyInfo.name }) }}</h2>
+        <div class="result-time">{{ t('result.calculationTime', { time: new Date().toLocaleString() }) }}</div>
       </div>
 
       <div class="result-sections">
         <div class="left-section">
           <div class="section">
-            <div class="section-icon">👤</div>
-            <div class="section-title">个人特征</div>
+            <div class="section-icon">{{ t('result.sections.personality.icon') }}</div>
+            <div class="section-title">{{ t('result.sections.personality.title') }}</div>
             <div class="section-content">
               <div class="birth-info">
-                生辰八字：{{ baziInfo.bazi }}<br>
-                真太阳时：{{ baziInfo.solarTime }}
+                {{ t('result.bazi', { bazi: baziInfo.bazi }) }}<br>
+                {{ t('result.solarTime', { time: baziInfo.solarTime }) }}
               </div>
               <div v-for="(info, index) in destinyInfo.personality.info1" :key="index" class="info-item">
                 {{ info }}
@@ -205,17 +208,17 @@
           </div>
 
           <div class="section">
-            <div class="section-icon">🤝</div>
-            <div class="section-title">人际关系</div>
+            <div class="section-icon">{{ t('result.sections.relationship.icon') }}</div>
+            <div class="section-title">{{ t('result.sections.relationship.title') }}</div>
             <div class="section-content">
               <div class="relation-group">
-                <div class="group-title">交友建议</div>
+                <div class="group-title">{{ t('result.sections.relationship.friendSuggestion') }}</div>
                 <div v-for="(item, index) in destinyInfo.relationship.friendSuggestion" :key="index" class="relation-item">
                   {{ item }}
                 </div>
               </div>
               <div class="relation-group">
-                <div class="group-title">适配伴侣</div>
+                <div class="group-title">{{ t('result.sections.relationship.coupleSuggestion') }}</div>
                 <div v-for="(item, index) in destinyInfo.relationship.coupleSuggestion" :key="index" class="relation-item">
                   {{ item }}
                 </div>
@@ -226,8 +229,8 @@
 
         <div class="right-section">
           <div class="section">
-            <div class="section-icon">📊</div>
-            <div class="section-title">运势解读</div>
+            <div class="section-icon">{{ t('result.sections.luck.icon') }}</div>
+            <div class="section-title">{{ t('result.sections.luck.title') }}</div>
             <div class="section-content">
               <div v-for="(item, index) in destinyInfo.luck.info1" :key="index" class="fortune-item">
                 <div class="fortune-title">{{ item.title }}</div>
@@ -237,11 +240,11 @@
           </div>
 
           <div class="section">
-            <div class="section-icon">✨</div>
-            <div class="section-title">开运建议</div>
+            <div class="section-icon">{{ t('result.sections.luckSuggestion.icon') }}</div>
+            <div class="section-title">{{ t('result.sections.luckSuggestion.title') }}</div>
             <div class="section-content">
               <div class="advice-group">
-                <div class="advice-title">开运颜色</div>
+                <div class="advice-title">{{ t('result.sections.luckSuggestion.color') }}</div>
                 <div class="advice-items">
                   <div v-for="(color, index) in destinyInfo.luckSuggestion.color" :key="index" class="tag-item">
                     {{ color }}
@@ -250,7 +253,7 @@
               </div>
 
               <div class="advice-group">
-                <div class="advice-title">开运方位</div>
+                <div class="advice-title">{{ t('result.sections.luckSuggestion.location') }}</div>
                 <div class="advice-items">
                   <div v-for="(location, index) in destinyInfo.luckSuggestion.location" :key="index" class="tag-item">
                     {{ location }}
@@ -259,7 +262,7 @@
               </div>
 
               <div class="advice-group">
-                <div class="advice-title">适合职业</div>
+                <div class="advice-title">{{ t('result.sections.luckSuggestion.career') }}</div>
                 <div class="advice-items">
                   <div v-for="(career, index) in destinyInfo.career.needCareer" :key="index" class="tag-item">
                     {{ career }}
@@ -268,7 +271,7 @@
               </div>
 
               <div class="advice-group">
-                <div class="advice-title">开运tips</div>
+                <div class="advice-title">{{ t('result.sections.luckSuggestion.tips') }}</div>
                 <div class="tips-items">
                   <div v-for="(tip, index) in destinyInfo.luckTips" :key="index" class="tip-item">
                     {{ tip }}
@@ -306,6 +309,12 @@ import {
 } from "./utils/leafletLocation";
 // 导入新的 Suncalc 太阳时计算
 import { calculateSolarTimeCompat } from "./utils/suncalcSolar";
+// 导入国际化
+import { useI18n } from "./i18n";
+import LanguageSwitcher from "./components/LanguageSwitcher.vue";
+
+// 使用国际化
+const { t, locale, setLocale } = useI18n();
 
 const birthDate = ref("");
 const location = ref([]);
@@ -359,20 +368,21 @@ const locationProps = {
   children: "children",
 };
 
-const hours = [
-  { value: "23-1", label: "子时 (23:00-1:00)" },
-  { value: "1-3", label: "丑时 (1:00-3:00)" },
-  { value: "3-5", label: "寅时 (3:00-5:00)" },
-  { value: "5-7", label: "卯时 (5:00-7:00)" },
-  { value: "7-9", label: "辰时 (7:00-9:00)" },
-  { value: "9-11", label: "巳时 (9:00-11:00)" },
-  { value: "11-13", label: "午时 (11:00-13:00)" },
-  { value: "13-15", label: "未时 (13:00-15:00)" },
-  { value: "15-17", label: "申时 (15:00-17:00)" },
-  { value: "17-19", label: "酉时 (17:00-19:00)" },
-  { value: "19-21", label: "戌时 (19:00-21:00)" },
-  { value: "21-23", label: "亥时 (21:00-23:00)" },
-];
+// 时辰选项 - 使用计算属性支持多语言
+const hours = computed(() => [
+  { value: "23-1", label: t('form.birthTime.zi') },
+  { value: "1-3", label: t('form.birthTime.chou') },
+  { value: "3-5", label: t('form.birthTime.yin') },
+  { value: "5-7", label: t('form.birthTime.mao') },
+  { value: "7-9", label: t('form.birthTime.chen') },
+  { value: "9-11", label: t('form.birthTime.si') },
+  { value: "11-13", label: t('form.birthTime.wu') },
+  { value: "13-15", label: t('form.birthTime.wei') },
+  { value: "15-17", label: t('form.birthTime.shen') },
+  { value: "17-19", label: t('form.birthTime.you') },
+  { value: "19-21", label: t('form.birthTime.xu') },
+  { value: "21-23", label: t('form.birthTime.hai') },
+]);
 
 const checkMobile = () => {
   isMobile.value = window.innerWidth <= 768;
@@ -425,11 +435,11 @@ const onCityChange = async (cityName) => {
         console.log('Coordinates found:', coordinates);
       } else {
         console.log('Coordinates not found for:', cityName);
-        ElMessage.warning(`无法获取 ${cityName} 的坐标信息`);
+        ElMessage.warning(t('messages.cannotGetCoords', { city: cityName }));
       }
     } catch (error) {
       console.error('Error getting city coordinates:', error);
-      ElMessage.error('获取城市坐标失败，请检查网络连接');
+      ElMessage.error(t('messages.coordsGetFailed'));
       currentLeafletCoordinates.value = null;
     }
   } else {
@@ -458,7 +468,7 @@ const showAddCityDialog = () => {
 // 使用 Leaflet 搜索城市坐标
 const searchCityCoordinates = async () => {
   if (!customCityForm.value.name.trim()) {
-    ElMessage.warning('请输入城市名称');
+    ElMessage.warning(t('messages.enterCityName'));
     return;
   }
   
@@ -470,16 +480,16 @@ const searchCityCoordinates = async () => {
     const results = await searchCityWithLeaflet(customCityForm.value.name);
     
     if (results.length === 0) {
-      searchError.value = '未找到相关城市，请检查城市名称拼写';
-      ElMessage.warning('未找到相关城市');
+      searchError.value = t('messages.noCityFound');
+      ElMessage.warning(t('messages.cityNotFound'));
     } else {
       searchResults.value = results;
-      ElMessage.success(`找到 ${results.length} 个结果，请选择正确的城市`);
+      ElMessage.success(t('messages.searchSuccess', { count: results.length }));
     }
   } catch (error) {
     console.error('搜索城市坐标失败：', error);
-    searchError.value = '搜索失败，请检查网络连接或稍后重试';
-    ElMessage.error('搜索失败，请检查网络连接');
+    searchError.value = t('messages.searchFailed');
+    ElMessage.error(t('messages.searchFailed'));
   } finally {
     searchLoading.value = false;
   }
@@ -496,7 +506,7 @@ const selectSearchResult = (result) => {
   }
   
   searchResults.value = [];
-  ElMessage.success('坐标已选中');
+  ElMessage.success(t('messages.coordsSelected'));
 };
 
 const addCustomCity = () => {
@@ -504,17 +514,17 @@ const addCustomCity = () => {
   
   // 验证输入
   if (!name || !name.trim()) {
-    ElMessage.warning('请输入城市名称');
+    ElMessage.warning(t('messages.enterCityName'));
     return;
   }
   
   if (!lat || !lng || !isValidCoordinates(lat, lng)) {
-    ElMessage.warning('请先搜索并选择有效的坐标');
+    ElMessage.warning(t('messages.selectValidCoords'));
     return;
   }
   
   if (!leafletCountry.value) {
-    ElMessage.warning('请先选择国家');
+    ElMessage.warning(t('messages.selectCountryFirst'));
     return;
   }
   
@@ -522,7 +532,7 @@ const addCustomCity = () => {
   const success = addLeafletCustomCity(name.trim(), leafletCountry.value, lat, lng);
   
   if (success) {
-    ElMessage.success('自定义城市添加成功');
+    ElMessage.success(t('messages.cityAddSuccess'));
     
     // 更新城市列表
     onCountryChange(leafletCountry.value);
@@ -534,13 +544,13 @@ const addCustomCity = () => {
     // 关闭对话框
     addCityDialogVisible.value = false;
   } else {
-    ElMessage.error('添加自定义城市失败，可能该城市已存在');
+    ElMessage.error(t('messages.cityAddFailed'));
   }
 };
 
 const handleSubmit = () => {
   if (!birthDate.value) {
-    ElMessage.warning("请选择出生日期");
+    ElMessage.warning(t('messages.selectBirthDate'));
     return;
   }
 
@@ -565,12 +575,12 @@ const handleSubmit = () => {
   } else if (locationService.value === 'leaflet') {
     // 使用 Leaflet 国际方案
     if (!leafletCountry.value || !leafletCity.value) {
-      ElMessage.warning("请选择国家和城市");
+      ElMessage.warning(t('messages.selectCountryCity'));
       return;
     }
     
     if (!currentLeafletCoordinates.value) {
-      ElMessage.warning("无法获取所选城市的坐标信息，请检查选择或添加自定义城市");
+      ElMessage.warning(t('messages.noCoordinates'));
       return;
     }
     
@@ -614,7 +624,7 @@ const handleSubmit = () => {
       }
     } catch (error) {
       console.error('太阳时计算失败，使用备用方案：', error);
-      ElMessage.warning('太阳时计算失败，使用备用方案');
+      ElMessage.warning(t('messages.solarTimeFailed'));
       
       // 备用方案：如果新方法失败，尝试传统方法
       if (useNewSolarMethod) {
