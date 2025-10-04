@@ -16,15 +16,15 @@
       <div class="form-group">
         <label>出生地点*</label>
         
-        <!-- 地理位置服务选择器 -->
-        <div class="location-service-selector">
+        <!-- 地理位置服务选择器（已隐藏，保留功能） -->
+        <div class="location-service-selector" style="display: none;">
           <el-radio-group v-model="locationService" size="small" class="service-toggle">
             <el-radio-button value="traditional">传统方案</el-radio-button>
             <el-radio-button value="leaflet">国际方案</el-radio-button>
           </el-radio-group>
         </div>
 
-        <!-- 传统地理位置选择器 -->
+        <!-- 传统地理位置选择器（已隐藏，保留功能） -->
         <CustomCascader
           v-if="locationService === 'traditional'"
           v-model="location"
@@ -146,38 +146,33 @@
         </template>
       </el-dialog>
 
-      <div class="form-row">
-        <el-row :gutter="20">
-          <el-col :xs="22" :sm="7">
-            <div class="form-group half">
-              <label>出生时辰*</label>
-              <el-select
-                v-model="birthHour"
-                class="input-field"
-                placeholder="请选择时辰"
-              >
-                <el-option
-                  v-for="hour in hours"
-                  :key="hour.value"
-                  :label="hour.label"
-                  :value="hour.value"
-                />
-              </el-select>
-            </div>
-          </el-col>
+      <div class="form-group">
+        <label>出生时辰</label>
+        <el-select
+          v-model="birthHour"
+          class="input-field"
+          placeholder="请选择时辰（可选）"
+          clearable
+        >
+          <el-option
+            v-for="hour in hours"
+            :key="hour.value"
+            :label="hour.label"
+            :value="hour.value"
+          />
+        </el-select>
+        <div class="form-hint">时辰可选填，不确定可留空，填写可提高结果测算准确度，不填运算时默认午时</div>
+      </div>
 
-          <el-col :xs="24" :sm="12">
-            <div class="form-group half">
-              <label>性别*</label>
-              <div class="radio-group">
-                <el-radio-group v-model="gender">
-                  <el-radio :value="'male'">男</el-radio>
-                  <el-radio :value="'female'">女</el-radio>
-                </el-radio-group>
-              </div>
-            </div>
-          </el-col>
-        </el-row>
+      <div class="form-group">
+        <label>性别</label>
+        <div class="radio-group">
+          <el-radio-group v-model="gender">
+            <el-radio :value="'male'">男</el-radio>
+            <el-radio :value="'female'">女</el-radio>
+            <el-radio :value="'unknown'">不方便透露</el-radio>
+          </el-radio-group>
+        </div>
       </div>
 
       <el-button type="primary" class="submit-btn" @click="handleSubmit">
@@ -188,7 +183,7 @@
 
     <div v-if="destinyInfo" class="destiny-result">
       <div class="result-header">
-        <h2>您的命理测算结果：{{ destinyInfo.name }}</h2>
+        <h2>您的命理测算结果：{{ destinyInfo.key }} · {{ destinyInfo.name }}</h2>
         <div class="result-time">测算时间：{{ new Date().toLocaleString() }}</div>
       </div>
 
@@ -323,8 +318,8 @@ const baziInfo = ref({
   solarTime: ''
 });
 
-// 地理位置服务选择
-const locationService = ref('traditional'); // 'traditional' 或 'leaflet'
+// 地理位置服务选择（默认使用国际方案，传统方案已隐藏但保留功能）
+const locationService = ref('leaflet'); // 'traditional' 或 'leaflet'
 
 // Leaflet 地理位置相关数据
 const leafletCountry = ref('');
@@ -548,10 +543,6 @@ const handleSubmit = () => {
     ElMessage.warning("请选择出生日期");
     return;
   }
-  if (!gender.value) {
-    ElMessage.warning("请选择性别");
-    return;
-  }
 
   // 验证地理位置信息
   let coordinates = null;
@@ -588,8 +579,8 @@ const handleSubmit = () => {
     useNewSolarMethod = true; // 使用新的 Suncalc 方法
   }
 
-  // 解析时辰，获取中间值
-  let hourValue = 12; // 默认值
+  // 解析时辰，获取中间值，默认午时（12点）
+  let hourValue = 12; // 默认午时
   if (birthHour.value) {
     // 处理子时（23-1）的特殊情况
     if (birthHour.value === '23-1') {
@@ -656,8 +647,8 @@ const handleSubmit = () => {
   // 分析身强身弱
   const strength = analyzeStrength(bazi);
 
-  // 查找对应的命理数据
-  destinyInfo.value = destinyData.find(item => item.name === strength);
+  // 查找对应的命理数据（使用key字段进行索引）
+  destinyInfo.value = destinyData.find(item => item.key === strength);
   
   console.log('命理信息：', {
     地理位置服务: locationService.value === 'traditional' ? '传统方案' : 'Leaflet国际方案',
@@ -668,8 +659,16 @@ const handleSubmit = () => {
     真太阳时: targetDate.toLocaleString(),
     八字: `${bazi.年柱} ${bazi.月柱} ${bazi.日柱} ${bazi.时柱}`,
     身强身弱: strength,
-    命理数据: destinyInfo.value ? destinyInfo.value.name : '未找到对应的命理数据'
+    命理类型: destinyInfo.value ? `${destinyInfo.value.key} · ${destinyInfo.value.name}` : '未找到对应的命理数据'
   });
+
+  // 滚动到结果位置
+  setTimeout(() => {
+    const resultElement = document.querySelector('.destiny-result');
+    if (resultElement) {
+      resultElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, 100);
 };
 
 const getImageUrl = (name) => {
@@ -680,24 +679,24 @@ const getImageUrl = (name) => {
 <style lang="scss" scoped>
 .container {
   width: 100%;
-  height: max-content;
+  min-height: 100vh;
+  padding: 40px 0;
 
   .form-container,
   .result-container {
-    background-color: #faf7f2;
-    padding: 30px 20px;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    width: max(300px, 60%);
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    margin: 100px auto;
+    background-color: #ffffff;
+    padding: 40px 50px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    width: 85%;
+    max-width: 1000px;
+    border: none;
+    margin: 0 auto 40px;
   }
 
   .form-container {
     .form-group {
-      padding: 16px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+      margin-bottom: 24px;
 
       &:last-child {
         margin-bottom: 0;
@@ -705,10 +704,10 @@ const getImageUrl = (name) => {
 
       label {
         display: block;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
         color: #333;
         font-size: 14px;
-        font-weight: 500;
+        font-weight: 400;
       }
 
       .input-field {
@@ -717,26 +716,60 @@ const getImageUrl = (name) => {
 
       :deep(.el-input__inner),
       :deep(.el-input__wrapper),
-      :deep(.el-date-editor.el-input),
       :deep(.el-cascader),
       :deep(.el-select) {
         height: 40px !important;
         font-size: 14px;
       }
 
+      :deep(.el-date-editor) {
+        height: 40px !important;
+        line-height: 40px !important;
+      }
+
+      :deep(.el-date-editor.el-input) {
+        height: 40px !important;
+        line-height: normal !important;
+        
+        .el-input__wrapper {
+          height: 40px !important;
+          padding: 0 11px !important;
+          box-sizing: border-box !important;
+        }
+        
+        .el-input__inner {
+          height: 38px !important;
+          line-height: 38px !important;
+        }
+        
+        .el-input__prefix,
+        .el-input__suffix {
+          height: 40px !important;
+          display: flex !important;
+          align-items: center !important;
+        }
+      }
+
       :deep(.el-input__wrapper) {
         background-color: #fff !important;
-        border: 1px solid rgba(0, 0, 0, 0.08);
+        border: 1px solid #e5e5e5;
+        border-radius: 6px;
         box-shadow: none !important;
 
         &:hover {
-          border-color: #8b7355;
+          border-color: #b3966d;
         }
 
         &.is-focus {
-          border-color: #8b7355;
-          box-shadow: 0 0 0 1px #8b7355 !important;
+          border-color: #b3966d;
+          box-shadow: none !important;
         }
+      }
+
+      :deep(.el-select .el-input__wrapper),
+      :deep(.el-date-editor .el-input__wrapper) {
+        border: 1px solid #e5e5e5;
+        border-radius: 6px;
       }
 
       .radio-group {
@@ -746,44 +779,43 @@ const getImageUrl = (name) => {
           font-size: 14px;
         }
       }
-    }
 
-    .form-row {
-      margin-bottom: 20px;
-
-      &:last-child {
-        margin-bottom: 0;
-      }
-
-      .half {
-        width: 100%;
+      .form-hint {
+        margin-top: 8px;
+        color: #999;
+        font-size: 12px;
+        line-height: 1.5;
       }
     }
 
     .submit-btn {
-      width: 150px;
-      height: 40px;
-      font-size: 13px;
-      font-weight: 500;
-      margin: 24px auto 0;
-      border-radius: 40px;
-      background-color: #8b7355 !important;
+      width: 160px;
+      height: 44px;
+      font-size: 15px;
+      font-weight: 400;
+      margin: 32px auto 0;
+      border-radius: 6px;
+      background-color: #a08968 !important;
       border: none;
       display: flex;
       align-items: center;
       justify-content: center;
+      transition: all 0.3s ease;
 
       &:hover {
-        background-color: #7a6445 !important;
+        background-color: #8f7857 !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(160, 137, 104, 0.3);
       }
     }
 
-          .hint {
-        text-align: center;
-        color: #666;
-        font-size: 13px;
-        margin-top: 16px;
-      }
+    .hint {
+      text-align: center;
+      color: #999;
+      font-size: 13px;
+      margin-top: 16px;
+      font-weight: 300;
+    }
 
       /* Leaflet 地理位置服务样式 */
       .location-service-selector {
@@ -1224,9 +1256,13 @@ const getImageUrl = (name) => {
   }
 
 .destiny-result {
-  max-width: 1200px;
-  margin: 40px auto;
-  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  width: 85%;
+  max-width: 1000px;
+  margin: 0 auto 40px;
+  padding: 40px 50px;
 
   .result-header {
     margin-bottom: 30px;
@@ -1377,13 +1413,18 @@ const getImageUrl = (name) => {
 
 @media (max-width: 768px) {
   .container {
-    .form-container {
-      margin: 20px auto;
-      padding: 20px 16px;
-      width: 95%;
+    padding: 20px 0;
+    
+    .form-container,
+    .result-container {
+      margin: 0 auto 20px;
+      padding: 24px 20px;
+      width: 90%;
+      max-width: none;
+      border-radius: 12px;
       
       .form-group {
-        padding: 12px;
+        margin-bottom: 20px;
         
         /* 移动端地理位置服务改进 */
         .location-service-selector {
@@ -1449,12 +1490,6 @@ const getImageUrl = (name) => {
         }
       }
     }
-  }
-
-  .result-container {
-    padding: 20px;
-    width: 100%;
-    margin: 20px auto;
 
     .result-header {
       flex-direction: column;
@@ -1534,7 +1569,11 @@ const getImageUrl = (name) => {
   }
 
   .destiny-result {
-    padding: 16px;
+    width: 90%;
+    max-width: none;
+    margin: 0 auto 20px;
+    padding: 24px 20px;
+    border-radius: 12px;
     
     .result-sections {
       flex-direction: column;
