@@ -8,4 +8,4 @@ import 'vant/lib/index.css'
 const app = createApp(App)
 app.use(ElementPlus)
 app.use(Vant)
-app.mount('#bazi-calculator-app')
+app.mount('#app')
