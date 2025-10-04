@@ -2,6 +2,8 @@ import { ref } from 'vue';
 import zhCN from './locales/zh-CN';
 import enUS from './locales/en-US';
 
+console.log('🚀 i18n 模块开始加载...');
+
 const messages = {
   'zh-CN': zhCN,
   'en-US': enUS
@@ -9,13 +11,17 @@ const messages = {
 
 // 从浏览器或localStorage获取语言设置
 const getDefaultLocale = () => {
+  
   const saved = localStorage.getItem('locale');
+  
   if (saved && messages[saved]) {
     return saved;
   }
   
   // 检测浏览器语言
   const browserLang = navigator.language || navigator.userLanguage;
+
+  
   if (browserLang.startsWith('zh')) {
     return 'zh-CN';
   }
