@@ -260,17 +260,31 @@
           <div class="section-content">
             <div v-for="(item, index) in destinyInfo.luck.info1" :key="index" class="fortune-item">
               <div class="fortune-title">{{ item.title }}</div>
-              <!-- 特殊处理职业管理，分成推荐和慎重两段 -->
-              <template v-if="item.title === '职业管理'">
+              <!-- 特殊处理职业管理/Career Pathways，分成推荐和慎重两段 -->
+              <template v-if="item.title === '职业管理' || item.title === 'Career Pathways' || item.title.includes('Career Pathways')">
                 <div class="career-sections">
-                  <div class="career-recommended" v-if="item.desc.includes('推荐行业')">
-                    <div class="career-label">✦ 推荐行业</div>
-                    <div class="career-text" v-html="formatCareerText(extractCareerSection(item.desc, '推荐行业'))"></div>
-                  </div>
-                  <div class="career-caution" v-if="item.desc.includes('慎重行业')">
-                    <div class="career-label">⚠ 慎重行业</div>
-                    <div class="career-text" v-html="formatCareerText(extractCareerSection(item.desc, '慎重行业'))"></div>
-                  </div>
+                  <!-- 中文模式 -->
+                  <template v-if="locale === 'zh-CN'">
+                    <div class="career-recommended" v-if="item.desc.includes('推荐行业')">
+                      <div class="career-label">✦ 推荐行业</div>
+                      <div class="career-text" v-html="formatCareerText(extractCareerSection(item.desc, '推荐行业'))"></div>
+                    </div>
+                    <div class="career-caution" v-if="item.desc.includes('慎重行业')">
+                      <div class="career-label">⚠ 慎重行业</div>
+                      <div class="career-text" v-html="formatCareerText(extractCareerSection(item.desc, '慎重行业'))"></div>
+                    </div>
+                  </template>
+                  <!-- 英文模式 -->
+                  <template v-else>
+                    <div class="career-recommended" v-if="item.desc.includes('Where You Flourish')">
+                      <div class="career-label">✦ Where You Flourish</div>
+                      <div class="career-text" v-html="formatCareerText(extractCareerSection(item.desc, 'Where You Flourish'))"></div>
+                    </div>
+                    <div class="career-caution" v-if="item.desc.includes('Where Energy Feels Drained')">
+                      <div class="career-label">⚠ Where Energy Feels Drained</div>
+                      <div class="career-text" v-html="formatCareerText(extractCareerSection(item.desc, 'Where Energy Feels Drained'))"></div>
+                    </div>
+                  </template>
                 </div>
               </template>
               <!-- 其他普通项目 -->
@@ -284,22 +298,35 @@
           <div class="section-icon">⭐</div>
           <div class="section-title">{{ t('result.sections.celebrities.title') }}</div>
           <div class="section-content">
-            <div class="celebrities-group" v-if="destinyInfo.celebrities.international && destinyInfo.celebrities.international.length">
-              <div class="group-title">{{ t('result.sections.celebrities.international') }}</div>
-              <div class="celebrities-items">
-                <div v-for="(celebrity, index) in destinyInfo.celebrities.international" :key="index" class="celebrity-item">
-                  {{ celebrity }}
+            <!-- 中文模式：区分国内国外 -->
+            <template v-if="locale === 'zh-CN'">
+              <div class="celebrities-group" v-if="destinyInfo.celebrities.international && destinyInfo.celebrities.international.length">
+                <div class="group-title">{{ t('result.sections.celebrities.international') }}</div>
+                <div class="celebrities-items">
+                  <div v-for="(celebrity, index) in destinyInfo.celebrities.international" :key="index" class="celebrity-item">
+                    {{ celebrity }}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="celebrities-group" v-if="destinyInfo.celebrities.domestic && destinyInfo.celebrities.domestic.length">
-              <div class="group-title">{{ t('result.sections.celebrities.domestic') }}</div>
-              <div class="celebrities-items">
-                <div v-for="(celebrity, index) in destinyInfo.celebrities.domestic" :key="index" class="celebrity-item">
-                  {{ celebrity }}
+              <div class="celebrities-group" v-if="destinyInfo.celebrities.domestic && destinyInfo.celebrities.domestic.length">
+                <div class="group-title">{{ t('result.sections.celebrities.domestic') }}</div>
+                <div class="celebrities-items">
+                  <div v-for="(celebrity, index) in destinyInfo.celebrities.domestic" :key="index" class="celebrity-item">
+                    {{ celebrity }}
+                  </div>
                 </div>
               </div>
-            </div>
+            </template>
+            <!-- 英文模式：不区分，只显示 international -->
+            <template v-else>
+              <div class="celebrities-group">
+                <div class="celebrities-items">
+                  <div v-for="(celebrity, index) in destinyInfo.celebrities.international" :key="index" class="celebrity-item">
+                    {{ celebrity }}
+                  </div>
+                </div>
+              </div>
+            </template>
           </div>
         </div>
 
@@ -487,7 +514,6 @@ watch(locale, (newLocale) => {
   // 如果已经有计算结果，切换语言时重新加载对应语言的数据
   if (lastCalculatedStrength.value && destinyInfo.value) {
     destinyInfo.value = findDestinyByKey(lastCalculatedStrength.value, newLocale);
-    console.log('语言已切换为:', newLocale === 'zh-CN' ? '中文' : 'English');
   }
 });
 
@@ -788,49 +814,54 @@ const getImageUrl = (name) => {
 const extractCareerSection = (desc, section) => {
   if (!desc) return '';
   
-  if (section === '推荐行业') {
-    // 提取"推荐行业："后面的内容，到"。慎重行业"之前
-    // 先找到推荐行业的起始位置
-    const startMatch = desc.match(/推荐行业[：:]/);
-    if (!startMatch) return '';
-    
-    const startIndex = startMatch.index + startMatch[0].length;
-    // 找到"。慎重行业"的位置
-    const endMatch = desc.substring(startIndex).match(/[。．]\s*慎重行业/);
-    
-    let result = '';
-    if (endMatch) {
-      // 提取到"。慎重行业"之前
-      result = desc.substring(startIndex, startIndex + endMatch.index);
-    } else {
-      // 如果没找到，就提取到第一个句号
-      const dotMatch = desc.substring(startIndex).match(/[。．]/);
-      if (dotMatch) {
-        result = desc.substring(startIndex, startIndex + dotMatch.index);
-      } else {
-        result = desc.substring(startIndex);
-      }
+  try {
+    // 中文模式
+    if (section === '推荐行业') {
+      const startMatch = desc.match(/推荐行业[：:]/);
+      if (!startMatch) return '';
+      
+      const startIndex = startMatch.index + startMatch[0].length;
+      const endMatch = desc.substring(startIndex).match(/[。．]\s*慎重行业/);
+      
+      let result = endMatch ? desc.substring(startIndex, startIndex + endMatch.index) : desc.substring(startIndex);
+      return formatCareerDescription(result.trim());
+    } else if (section === '慎重行业') {
+      const startMatch = desc.match(/慎重行业[：:]/);
+      if (!startMatch) return '';
+      
+      const startIndex = startMatch.index + startMatch[0].length;
+      let result = desc.substring(startIndex);
+      result = result.replace(/[。．]+$/, '').trim();
+      return formatCareerDescription(result);
     }
     
-    // 格式化为分行显示
-    return formatCareerDescription(result.trim());
-  } else if (section === '慎重行业') {
-    // 提取"慎重行业："后面的内容
-    const startMatch = desc.match(/慎重行业[：:]/);
-    if (!startMatch) return '';
-    
-    const startIndex = startMatch.index + startMatch[0].length;
-    let result = desc.substring(startIndex);
-    
-    // 移除末尾的句号
-    result = result.replace(/[。．]+$/, '').trim();
-    return formatCareerDescription(result);
+    // 英文模式
+    if (section === 'Where You Flourish') {
+      const startMatch = desc.match(/Where You Flourish:/);
+      if (!startMatch) return '';
+      
+      const startIndex = startMatch.index + startMatch[0].length;
+      const endMatch = desc.substring(startIndex).match(/Where Energy Feels Drained:/);
+      
+      let result = endMatch ? desc.substring(startIndex, startIndex + endMatch.index) : desc.substring(startIndex);
+      return formatCareerDescriptionEn(result.trim());
+    } else if (section === 'Where Energy Feels Drained') {
+      const startMatch = desc.match(/Where Energy Feels Drained:/);
+      if (!startMatch) return '';
+      
+      const startIndex = startMatch.index + startMatch[0].length;
+      let result = desc.substring(startIndex);
+      return formatCareerDescriptionEn(result.trim());
+    }
+  } catch (error) {
+    console.error('解析职业描述错误:', error);
+    return desc; // 出错时返回原始描述
   }
   
   return desc;
 };
 
-// 格式化职业描述为分行显示
+// 格式化职业描述为分行显示（中文）
 const formatCareerDescription = (text) => {
   if (!text) return '';
   
@@ -847,6 +878,50 @@ const formatCareerDescription = (text) => {
       return `• ${trimmed}`;
     }
   }).join('\n');
+};
+
+// 格式化职业描述为分行显示（英文）
+const formatCareerDescriptionEn = (text) => {
+  if (!text) return '';
+  
+  // 查找 "Where You Flourish" 或 "Where Energy Feels Drained" 部分
+  if (text.includes('Where You Flourish:') || text.includes('Where Energy Feels Drained:')) {
+    // 如果有这些关键词，按这些标志分割
+    const parts = [];
+    
+    // 处理 "Recommended Industries:" 的开头部分
+    if (text.includes('Recommended Industries:')) {
+      const startRegex = /Recommended Industries:/;
+      const match = text.match(startRegex);
+      if (match) {
+        text = text.substring(match.index + match[0].length).trim();
+      }
+    }
+    
+    // 按句号分割，保持分类标题的完整性
+    const sentences = text.split('.').filter(s => s.trim().length > 0);
+    
+    return sentences.map(sentence => {
+      const trimmed = sentence.trim();
+      if (trimmed.includes(':')) {
+        // 包含冒号的是分类标题，保持原样
+        return trimmed;
+      } else if (trimmed) {
+        // 其他内容加项目符号
+        return `• ${trimmed}`;
+      }
+      return trimmed;
+    }).filter(s => s).join('\n');
+  }
+  
+  // 如果没有这些特殊结构，按逗号分割
+  const items = text.split(',').filter(s => s.trim().length > 0);
+  
+  if (items.length > 1) {
+    return items.map(item => `• ${item.trim()}`).join('\n');
+  }
+  
+  return text;
 };
 
 // 格式化职业文本为HTML显示（处理换行）

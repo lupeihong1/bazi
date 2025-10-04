@@ -71,10 +71,10 @@ export default {
       },
       personality: {
         icon: '🌟',
-        title: 'Personal Traits'
+        title: 'Energy Signature'
       },
       character: {
-        title: 'Character Traits'
+        title: 'Key Traits'
       },
       relationship: {
         icon: '👥',
@@ -83,7 +83,7 @@ export default {
         coupleSuggestion: 'Love & Compatibility'
       },
       luck: {
-        icon: '📊',
+        icon: '🔮',
         title: 'Wealth, Health & Heart'
       },
       favorableElements: {
