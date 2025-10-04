@@ -11,7 +11,8 @@ Straightforward communication: Honest and direct in speech – just be mindful o
 Resilient and courageous: Beneath a strong exterior lies a kind heart. In critical moments, you dare to break through barriers and innovate.
 Highly action-oriented: You execute plans swiftly. Learn to temper impulsiveness when making major decisions.`,
     },
-    favorableElements: "Empowered Jia Wood benefits from Metal, Fire, and Earth elements. These elements help balance your abundant Wood energy and keep you grounded, allowing your strengths to shine more steadily.",
+    favorableElements:
+      "Empowered Jia Wood benefits from Metal, Fire, and Earth elements. These elements help balance your abundant Wood energy and keep you grounded, allowing your strengths to shine more steadily.",
     luck: {
       info1: [
         {
@@ -47,19 +48,19 @@ Highly action-oriented: You execute plans swiftly. Learn to temper impulsiveness
       international: [
         "Jane Goodall: A pioneering primatologist and UN Messenger of Peace known for fearless leadership in her field",
         "John Legend: Singer and social activist who boldly uses his platform for change",
-        "Billie Jean King: Tennis legend who led the charge for gender equality in sports ('Battle of the Sexes')"
+        "Billie Jean King: Tennis legend who led the charge for gender equality in sports ('Battle of the Sexes')",
       ],
       domestic: [
         "Tu Youyou: Scientist who discovered artemisinin, the first Chinese Nobel laureate in medicine (a trailblazer saving millions of lives)",
         "Han Hong: Singer and philanthropist recognized for boldly leading disaster relief and charity efforts",
-        "Jia Zhangke: Renowned film director who carved out a new wave in Chinese cinema with visionary storytelling"
-      ]
+        "Jia Zhangke: Renowned film director who carved out a new wave in Chinese cinema with visionary storytelling",
+      ],
     },
     luckSuggestion: {
       dailyTips: [
         "Listen to heavy metal music to boost your energy and confidence",
         "Chew mint-flavored gum to calm anxiety and sharpen focus",
-        "Include more white-colored foods in your diet (like pears, radish, cauliflower) for good luck and vitality"
+        "Include more white-colored foods in your diet (like pears, radish, cauliflower) for good luck and vitality",
       ],
       color: [
         "Red & Purple (Fire): These passionate hues ignite your motivation and creativity.",
@@ -83,7 +84,8 @@ Highly action-oriented: You execute plans swiftly. Learn to temper impulsiveness
 Idealistic dreamer: Your ambitions soar among the clouds, but in action you're easily swayed by outside influences.
 Steadfast when it counts: Despite a gentle exterior, you show astonishing grit in critical moments.`,
     },
-    favorableElements: "Attuned Jia Wood benefits from Water and Wood elements. Like a vine needing rain and a trellis, you benefit from nourishing Water and supportive Wood energies.",
+    favorableElements:
+      "Attuned Jia Wood benefits from Water and Wood elements. Like a vine needing rain and a trellis, you benefit from nourishing Water and supportive Wood energies.",
     luck: {
       info1: [
         {
@@ -118,16 +120,16 @@ Steadfast when it counts: Despite a gentle exterior, you show astonishing grit i
       international: [
         "Malala Yousafzai: The youngest Nobel Peace Prize laureate, who used wisdom and resilience to advocate for girls' education worldwide",
         "Brad Pitt: Hollywood superstar known not just for acting but also for strategic career moves and humanitarian efforts",
-        "Satya Nadella: CEO of Microsoft, who combines an adaptive leadership style with clear strategic vision"
+        "Satya Nadella: CEO of Microsoft, who combines an adaptive leadership style with clear strategic vision",
       ],
       domestic: [
-        "Lin Dan: Badminton champion with a double Grand Slam, demonstrating flexible strategy and fierce determination"
-      ]
+        "Lin Dan: Badminton champion with a double Grand Slam, demonstrating flexible strategy and fierce determination",
+      ],
     },
     luckSuggestion: {
       dailyTips: [
         "Eat spicy foods (within your tolerance) to invigorate your energy and shake off lethargy",
-        "Hit the gym and lift weights – intense physical effort helps release any negative feelings and keeps you mentally sharp"
+        "Hit the gym and lift weights – intense physical effort helps release any negative feelings and keeps you mentally sharp",
       ],
       color: [
         "Teal (Wood): Enhances your decision-making and clarity.",
@@ -151,7 +153,8 @@ Steadfast when it counts: Despite a gentle exterior, you show astonishing grit i
 Flexible yet persistent: Like a vine that adapts to its environment while steadily growing toward the light.
 Detail-oriented perfectionist: You notice nuances others miss and strive for excellence in everything you do.`,
     },
-    favorableElements: "Empowered Yi Wood benefits from Metal and Fire elements. Embracing Metal's clarity and Fire's inspiration smooths your energetic flow.",
+    favorableElements:
+      "Empowered Yi Wood benefits from Metal and Fire elements. Embracing Metal's clarity and Fire's inspiration smooths your energetic flow.",
     luck: {
       info1: [
         {
@@ -187,18 +190,18 @@ Detail-oriented perfectionist: You notice nuances others miss and strive for exc
         "Katherine Johnson: The NASA mathematician who broke race and gender barriers, brilliant and meticulous with gentle determination",
         "Oprah Winfrey: Media mogul and philanthropist known for empathy and empowering others",
         "Beyoncé Knowles: Singer and philanthropist who channels deep emotion and creativity into her art and charity",
-        "Louis Pasteur: Father of microbiology, inventor of pasteurization and vaccines, who changed the world through patient research"
+        "Louis Pasteur: Father of microbiology, inventor of pasteurization and vaccines, who changed the world through patient research",
       ],
       domestic: [
         "Lei Jun: Founder of Xiaomi Technology, who built success with a calm, persistent approach",
         "Liu Qiangdong (Richard Liu): Founder of JD.com, quietly strategic in revolutionizing e-commerce",
-        "Deng Jiaxian: Physicist and key figure in China's atomic bomb project, who worked humbly behind the scenes"
-      ]
+        "Deng Jiaxian: Physicist and key figure in China's atomic bomb project, who worked humbly behind the scenes",
+      ],
     },
     luckSuggestion: {
       dailyTips: [
         "Avoid wearing denim too often (softer fabrics align better with your gentle energy)",
-        "When taking public transport, try to sit by the window to recharge with passing scenery"
+        "When taking public transport, try to sit by the window to recharge with passing scenery",
       ],
       color: [
         "White (Metal): Symbolizes clarity and purity, helping you rein in scattered energy.",
@@ -221,7 +224,8 @@ Detail-oriented perfectionist: You notice nuances others miss and strive for exc
 Strategic pacifist: You prefer to handle matters indirectly and tactfully, using strategy and leverage.
 Principled core: Though you appear gentle, you have an inner scholar's backbone.`,
     },
-    favorableElements: "Attuned Yi Wood benefits from Water and Wood elements. Like vines needing water and a lattice, you require nourishment and support to grow strong.",
+    favorableElements:
+      "Attuned Yi Wood benefits from Water and Wood elements. Like vines needing water and a lattice, you require nourishment and support to grow strong.",
     luck: {
       info1: [
         {
@@ -255,16 +259,16 @@ Principled core: Though you appear gentle, you have an inner scholar's backbone.
     celebrities: {
       international: [
         "Maria Montessori: Italian educator who revolutionized early childhood education with the Montessori method",
-        "Mo Yan: Nobel Prize-winning Chinese author known for his rich storytelling rooted in rural upbringing"
+        "Mo Yan: Nobel Prize-winning Chinese author known for his rich storytelling rooted in rural upbringing",
       ],
       domestic: [
-        "Community figures: Local heroes, family figures, or supportive roles who exemplify patient cultivation and steady impact"
-      ]
+        "Community figures: Local heroes, family figures, or supportive roles who exemplify patient cultivation and steady impact",
+      ],
     },
     luckSuggestion: {
       dailyTips: [
         "Place a soft, warm-glow lamp by your bedside and turn it on in the evening for soothing light",
-        "Get some natural sunlight every day, especially in the morning, to lift your mood and energize your Earth element"
+        "Get some natural sunlight every day, especially in the morning, to lift your mood and energize your Earth element",
       ],
       color: [
         "Green & Blue (Wood/Water): Green symbolizes life and growth; blue represents nourishment and flow.",
@@ -286,7 +290,8 @@ Principled core: Though you appear gentle, you have an inner scholar's backbone.
 Quick-Witted: Creative and mentally agile, you generate ideas swiftly and consider others' input to refine your judgment.
 Passionate & Loyal: Though you appear strong and bold, you are deeply sentimental and value loyalty.`,
     },
-    favorableElements: "Empowered Bing Fire benefits from Metal and Water elements. Metal and Water energies help 'cool' and control your fire, channeling your passion into more structured action.",
+    favorableElements:
+      "Empowered Bing Fire benefits from Metal and Water elements. Metal and Water energies help 'cool' and control your fire, channeling your passion into more structured action.",
     luck: {
       info1: [
         {
@@ -322,18 +327,18 @@ Passionate & Loyal: Though you appear strong and bold, you are deeply sentimenta
         "J.K. Rowling: Author of Harry Potter, who ignited imaginations worldwide with persistence and creative vision",
         "Steve Jobs: Co-founder of Apple, who revolutionized personal computing by blending tech and design with fiery passion",
         "Florence Nightingale: Pioneer of modern nursing, who reformed battlefield medical care and established nurse training",
-        "Frida Kahlo: Famed painter who advocated women's rights through autobiographical art with intense passion and courage"
+        "Frida Kahlo: Famed painter who advocated women's rights through autobiographical art with intense passion and courage",
       ],
       domestic: [
         "Justin Bieber: Canadian pop singer and songwriter, a global icon who shaped youth culture and modern pop music trends",
         "Guo Jingjing: Olympic diving champion celebrated for her fearless precision and dominance in competition",
-        "Yang Liwei: China's first astronaut in space, who boldly ventured into the unknown"
-      ]
+        "Yang Liwei: China's first astronaut in space, who boldly ventured into the unknown",
+      ],
     },
     luckSuggestion: {
       dailyTips: [
         "Use a snowy mountain image as your profile picture or phone wallpaper – its cool, majestic vibe helps steady your fiery energy",
-        "Snack on sour-flavored treats (like dried plums or citrus candies) to calm excess 'fire' and help balance your temperament"
+        "Snack on sour-flavored treats (like dried plums or citrus candies) to calm excess 'fire' and help balance your temperament",
       ],
       color: [
         "White (Metal): Symbolizes clarity and focus, helping you rein in outward energy.",
@@ -355,7 +360,8 @@ Passionate & Loyal: Though you appear strong and bold, you are deeply sentimenta
       info2: `Sensitive inside: Outwardly cheerful and straightforward, but inside you worry and overthink.
 Open-minded: You instinctively look at challenges from multiple angles with broad versatile perspective.`,
     },
-    favorableElements: "Attuned Bing Fire benefits from Wood and Fire elements. A small flame grows brighter when it's given wood for fuel and fire for warmth.",
+    favorableElements:
+      "Attuned Bing Fire benefits from Wood and Fire elements. A small flame grows brighter when it's given wood for fuel and fire for warmth.",
     luck: {
       info1: [
         {
@@ -391,17 +397,17 @@ Open-minded: You instinctively look at challenges from multiple angles with broa
         "Nelson Mandela: South Africa's first black president, who fought apartheid with steadfast, non-violent resolve",
         "Leonardo DiCaprio: Oscar-winning actor and environmental activist who uses his influence for climate causes",
         "Serena Williams: Tennis legend who has championed maternal health and education while dominating her sport",
-        "Albert Einstein: Theoretical physicist known for creativity and pacifism, who opposed nuclear weapons proliferation"
+        "Albert Einstein: Theoretical physicist known for creativity and pacifism, who opposed nuclear weapons proliferation",
       ],
       domestic: [
         "Immanuel Kant: Enlightenment philosopher who proposed the 'categorical imperative' and perpetual peace theory",
-        "Yu Minhong (Michael Yu): Founder of New Oriental Education, who steadily built one of China's largest education companies"
-      ]
+        "Yu Minhong (Michael Yu): Founder of New Oriental Education, who steadily built one of China's largest education companies",
+      ],
     },
     luckSuggestion: {
       dailyTips: [
         "Get sunshine in the morning – literally go out and soak in sunlight to recharge your yang energy for the day",
-        "Keep a small potted plant on your desk – nurturing a bit of greenery at work brings you peace and a subtle energy boost"
+        "Keep a small potted plant on your desk – nurturing a bit of greenery at work brings you peace and a subtle energy boost",
       ],
       color: [
         "Red & Gold (Fire): Red infuses passion; gold adds concentration and decisiveness.",
@@ -424,7 +430,8 @@ Open-minded: You instinctively look at challenges from multiple angles with broa
 Quick-Witted: Creative and mentally agile, you generate ideas swiftly and consider others' input to refine your judgment.
 Passionate & Loyal: Though you appear strong and bold, you are deeply sentimental and value loyalty.`,
     },
-    favorableElements: "Empowered Ding Fire benefits from Metal, Water, and Earth elements. These energies help stabilize your firepower, channeling your passion into more structured action.",
+    favorableElements:
+      "Empowered Ding Fire benefits from Metal, Water, and Earth elements. These energies help stabilize your firepower, channeling your passion into more structured action.",
     luck: {
       info1: [
         {
@@ -459,16 +466,16 @@ Passionate & Loyal: Though you appear strong and bold, you are deeply sentimenta
       international: [
         "Stephen Hawking: Theoretical physicist who unlocked secrets of black holes and the universe with brilliant precision",
         "Jacques Lacan: Innovative psychoanalyst who founded the Paris Freudian school with exacting, unconventional theories",
-        "Zendaya: Emmy Award-winning actress admired for her versatility and flawless style"
+        "Zendaya: Emmy Award-winning actress admired for her versatility and flawless style",
       ],
       domestic: [
-        "Liu Guoliang: Former Olympic gold medalist in table tennis turned national team coach and sports executive"
-      ]
+        "Liu Guoliang: Former Olympic gold medalist in table tennis turned national team coach and sports executive",
+      ],
     },
     luckSuggestion: {
       dailyTips: [
         "Introduce wooden elements into your environment – use a wooden desk organizer or display a small wooden sculpture",
-        "Set your phone or computer wallpaper to a flowing water scene – perhaps a river, waterfall, or ocean waves"
+        "Set your phone or computer wallpaper to a flowing water scene – perhaps a river, waterfall, or ocean waves",
       ],
       color: [
         "Black & Blue (Water): Black symbolizes depth, blue brings calm rationality – both help stabilize emotions.",
@@ -492,7 +499,8 @@ Passionate & Loyal: Though you appear strong and bold, you are deeply sentimenta
 Meticulous & Thoughtful: Rich in emotion and highly considerate, you think things through carefully and pay attention to the little details.
 Steadfast at Heart: On the surface you seem flexible and accommodating, but deep down you hold firmly to your principles.`,
     },
-    favorableElements: "Attuned Ding Fire benefits from Wood and Fire elements. With Wood and Fire support, you can steadily enhance your energy and enthusiasm.",
+    favorableElements:
+      "Attuned Ding Fire benefits from Wood and Fire elements. With Wood and Fire support, you can steadily enhance your energy and enthusiasm.",
     luck: {
       info1: [
         {
@@ -525,16 +533,16 @@ Steadfast at Heart: On the surface you seem flexible and accommodating, but deep
     },
     celebrities: {
       international: [
-        "Community figures: Local heroes, family figures, or supportive roles who exemplify patient cultivation and steady impact"
+        "Community figures: Local heroes, family figures, or supportive roles who exemplify patient cultivation and steady impact",
       ],
       domestic: [
-        "Community figures: Local heroes, family figures, or supportive roles who exemplify patient cultivation and steady impact"
-      ]
+        "Community figures: Local heroes, family figures, or supportive roles who exemplify patient cultivation and steady impact",
+      ],
     },
     luckSuggestion: {
       dailyTips: [
         "Place a soft, warm-glow lamp by your bedside and turn it on in the evening for soothing light",
-        "Get some natural sunlight every day, especially in the morning, to lift your mood and energize your Earth element"
+        "Get some natural sunlight every day, especially in the morning, to lift your mood and energize your Earth element",
       ],
       color: [
         "Red & Purple (Fire): Red symbolizes passion and motivation, purple brings inspiration and courage, enhancing confidence and action.",
@@ -557,7 +565,8 @@ Steadfast at Heart: On the surface you seem flexible and accommodating, but deep
 Inclusive & Resolute: Outwardly generous and tolerant, inwardly principled, yielding not an inch on key issues.
 Cautious & Self-disciplined: Prone to missing opportunities due to excessive pursuit of safety; guard against solidified thinking and slow decision-making.`,
     },
-    favorableElements: "Empowered Wu Earth benefits from Metal, Water, and Wood elements. These energies help balance your abundant Earth energy and prevent rigidity.",
+    favorableElements:
+      "Empowered Wu Earth benefits from Metal, Water, and Wood elements. These energies help balance your abundant Earth energy and prevent rigidity.",
     luck: {
       info1: [
         {
@@ -591,16 +600,16 @@ Cautious & Self-disciplined: Prone to missing opportunities due to excessive pur
     celebrities: {
       international: [
         "Warren Buffett: Legendary investor known for his steady, long-term approach to wealth building",
-        "George Washington: First President of the United States, known for his steady leadership and principled character"
+        "George Washington: First President of the United States, known for his steady leadership and principled character",
       ],
       domestic: [
-        "Community leaders: Local government officials, community organizers, and stable family figures who exemplify steady leadership"
-      ]
+        "Community leaders: Local government officials, community organizers, and stable family figures who exemplify steady leadership",
+      ],
     },
     luckSuggestion: {
       dailyTips: [
         "Spend time in nature, especially mountains or stable landscapes to ground your energy",
-        "Practice meditation or mindfulness to balance your sometimes rigid thinking patterns"
+        "Practice meditation or mindfulness to balance your sometimes rigid thinking patterns",
       ],
       color: [
         "White (Metal): White symbolizes clarity and flexibility, helping Wu Earth add adaptability while maintaining stability.",
@@ -624,7 +633,8 @@ Cautious & Self-disciplined: Prone to missing opportunities due to excessive pur
 Practical & Grounded: You prefer steady, reliable approaches over flashy or risky ventures.
 Steady & Dependable: Others can count on you for consistent support and practical solutions.`,
     },
-    favorableElements: "Attuned Wu Earth benefits from Fire and Wood elements. These energies help you grow and develop your nurturing potential.",
+    favorableElements:
+      "Attuned Wu Earth benefits from Fire and Wood elements. These energies help you grow and develop your nurturing potential.",
     luck: {
       info1: [
         {
@@ -658,16 +668,16 @@ Steady & Dependable: Others can count on you for consistent support and practica
     celebrities: {
       international: [
         "Maria Montessori: Italian educator who revolutionized early childhood education with the Montessori method",
-        "Mo Yan: Nobel Prize-winning Chinese author known for his rich storytelling rooted in rural upbringing"
+        "Mo Yan: Nobel Prize-winning Chinese author known for his rich storytelling rooted in rural upbringing",
       ],
       domestic: [
-        "Community figures: Local heroes, family figures, or supportive roles who exemplify patient cultivation and steady impact"
-      ]
+        "Community figures: Local heroes, family figures, or supportive roles who exemplify patient cultivation and steady impact",
+      ],
     },
     luckSuggestion: {
       dailyTips: [
         "Place a soft, warm-glow lamp by your bedside and turn it on in the evening for soothing light",
-        "Get some natural sunlight every day, especially in the morning, to lift your mood and energize your Earth element"
+        "Get some natural sunlight every day, especially in the morning, to lift your mood and energize your Earth element",
       ],
       color: [
         "Black & Blue (Water): Deep shades symbolize depth and calm. These colors help stabilize your emotions, keeping you cool and collected so you're not easily rattled by external events.",
@@ -691,8 +701,8 @@ Steady & Dependable: Others can count on you for consistent support and practica
 Practical & Grounded: You prefer steady, reliable approaches and excel at creating stable foundations.
 Patient & Dependable: Others can count on you for consistent support and practical solutions.`,
     },
-    favorableElements: "Empowered Ji Earth benefits from Metal, Water, and Wood elements. These energies help balance your abundant Earth energy and prevent rigidity.",
-
+    favorableElements:
+      "Empowered Ji Earth benefits from Metal, Water, and Wood elements. These energies help balance your abundant Earth energy and prevent rigidity.",
     luck: {
       info1: [
         {
@@ -725,6 +735,16 @@ Patient & Dependable: Others can count on you for consistent support and practic
       ],
     },
 
+    celebrities: {
+      international: [
+        "Carl Gustav Jung: A prominent psychiatrist and protege of Freud who later founded analytical psychology. Jung introduced concepts like the 'collective unconscious' and archetypes, exemplifying Empowered Ji Earth by collecting wisdom from various cultures and integrating them into a stable framework of ideas",
+      ],
+      domestic: [
+        "Ding Lei: The founder of NetEase, one of China's biggest tech companies. Known for his consistent and pragmatic leadership style, quietly building NetEase into a diverse and solid enterprise",
+        "Yu Qiuyu: A famous essayist and cultural scholar in China, known for his reflective writings on culture and history, maintaining a steady voice in the literary world over decades",
+      ],
+    },
+
     luckSuggestion: {
       color: [
         "Red & Purple (Fire): Fiery reds signify passion and drive, while rich purples inspire imagination and courage. Using touches of red and purple can supercharge your confidence and proactiveness.",
@@ -735,30 +755,6 @@ Patient & Dependable: Others can count on you for consistent support and practic
         "East (Wood): Eastern energy symbolizes sunrise, growth, and learning – perfect for your personal development. Facing east when you study or brainstorm can stimulate your creativity and learning capacity.",
       ],
     },
-
-    career: {
-      needCareer: [
-        "Education: Teaching and nurturing roles, school teacher, early childhood educator, or vocational trainer",
-        "Writing & Culture: Publishing, writing, editing, or library and museum work",
-        "Counseling & Consulting: Psychologist or therapist, career coach, human resources specialist",
-        "Health & Wellness: Alternative medicine, nutrition coaching, physical therapy, or yoga/meditation instructor",
-        "Design & Craftsmanship: Graphic or UI/UX design, floral arrangement, lighting design, or handcrafting",
-        "Spiritual & Philosophical Fields: Teacher of traditional cultural arts, feng shui consultant, philosophy researcher",
-      ],
-      notCareer: [
-        "High Finance & Law",
-        "Maritime & Shipping",
-        "Heavy Industry & Mining",
-        "Military & Policing",
-        "Forestry & Agriculture",
-        "Fast Fashion & Manufacturing",
-      ],
-    },
-
-    luckTips: [
-      "Arrange to meet friends or colleagues in cozy cafés or libraries",
-      "Set your phone's lock screen to an image of a sunrise or serene forest",
-    ],
   },
   {
     key: "身弱己土",
@@ -766,12 +762,13 @@ Patient & Dependable: Others can count on you for consistent support and practic
     personality: {
       info1: [
         "Attuned Ji Earth is the soil of a humble field – not grand or imposing like a mountain, but rich with quiet potential. When its energy is in a 'weak' phase, it might have limited strength or influence and requires careful tending to build itself up. However, its value comes from the ability to nurture life's everyday growth.",
-        "Favorable Elements: Fire, Earth. As an Attuned Ji Earth, you sometimes feel a lack of the natural confidence or push that stronger personalities have. To bolster yourself, embrace Fire and Earth energies around you. Fire adds passion, motivation, and warmth.",
       ],
       info2: `Gentle & Accommodating: You are warm-hearted and approach others with patience and kindness. In both personal and work settings, you're the one who listens, mediates, and finds common ground. You're excellent at coordinating among different people and making everyone feel heard.
 Cautious & Sensitive: Internally, you're quite sensitive and often worry about worst-case scenarios. Security is very important to you – you like to know the plan, the backup plan, and maybe have a backup for the backup.
 Principled & Steadfast: You come across as easygoing, maybe even submissive or very flexible, and indeed you prefer harmony over conflict. Yet, there's a line in the sand that you won't cross.`,
     },
+    favorableElements:
+      "Attuned Ji Earth benefits from Fire and Earth elements. As an Attuned Ji Earth, you sometimes feel a lack of the natural confidence or push that stronger personalities have. To bolster yourself, embrace Fire and Earth energies around you. Fire adds passion, motivation, and warmth.",
     luck: {
       info1: [
         {
@@ -798,6 +795,14 @@ Principled & Steadfast: You come across as easygoing, maybe even submissive or v
         "Geng Metal: A Geng Metal partner brings a breath of fresh air into your life by challenging some of your more conservative or anxious tendencies. They are straightforward and often fearless in expressing themselves, which can help coax you out of overthinking.",
       ],
     },
+    celebrities: {
+      international: [
+        "Maria Montessori: An Italian educator who revolutionized early childhood education with the Montessori method, which emphasizes child-led, hands-on learning at a gentle pace. Her approach was not about forcing outcomes, but about nurturing each child's potential",
+      ],
+      domestic: [
+        "Mo Yan: A Nobel Prize-winning Chinese author known for his rich storytelling rooted in his rural upbringing. He spent years honing his craft, writing about the lives of ordinary people with great empathy and depth",
+      ],
+    },
     luckSuggestion: {
       color: [
         "Yellow (Earth): Sunny, golden hues are your personal energizer. Yellow reinforces your resilience and optimism, acting almost like a shield against stress. Wearing a touch of yellow can remind you of your own strength and brighten your disposition.",
@@ -808,25 +813,6 @@ Principled & Steadfast: You come across as easygoing, maybe even submissive or v
         "South (Fire): The south direction infuses you with drive and enthusiasm. When you need to be proactive or tackle a 'to-do' list efficiently, try facing south or arranging to be in a south-end room.",
       ],
     },
-    career: {
-      needCareer: [
-        "Education: You are well-suited for roles in education that require dedication and compassion. You could be an excellent elementary or high school teacher, patiently guiding the next generation",
-        "Cultural Preservation & Media: Careers in libraries, archives, museums, or cultural research fit your careful, methodical style. As a librarian or archivist, you would manage information with precision",
-        "Consulting & Social Services: You have a natural ability to help and organize, which can translate into roles like a counselor, social worker, or community service coordinator",
-        "Scientific Research & QA: If you're drawn to science or tech, consider behind-the-scenes roles that require diligence. You might become a reliable lab technician, data scientist, or software tester",
-        "Public Administration & Energy Sector: A stable government job or a role in public utilities might suit you. The bureaucratic pace can actually be a comfort for you",
-      ],
-      notCareer: [
-        "Fashion & Trend-Driven Industries: Fast fashion, trend marketing, or social media influencing often require you to constantly adapt to new fads and put yourself out there energetically",
-        "Aquatic & Adventure Careers: Commercial fishing, cruise hospitality, adventure tourism introduce a high level of unpredictability from weather to customer behavior",
-        "High-Speed Transportation: Roles like air traffic controller, pilot, or emergency logistics responder come with split-second decisions and high stakes under pressure",
-        "Speculative Finance & Arbitration: Being a stockbroker, hedge fund trader, or venture capitalist involves big gambles and handling potential failures regularly",
-      ],
-    },
-    luckTips: [
-      "Place a soft, warm-glow lamp by your bedside and turn it on in the evening. Take a few moments to reflect on the day's small accomplishments",
-      "Make it a point to get some natural sunlight every day, especially in the morning if possible. Sunlight will lift your mood and energize your Earth element",
-    ],
   },
   {
     key: "身强壬水",
@@ -834,12 +820,13 @@ Principled & Steadfast: You come across as easygoing, maybe even submissive or v
     personality: {
       info1: [
         "Ren Water signifies mighty rivers and open oceans – vast, powerful, and always moving. When strongly empowered, Empowered Ren Water has sweeping vision and deep insight, often thinking on a grand scale and planning for the long term. Its growth comes from learning to channel that immense potential into steady forward motion.",
-        "Favorable Elements: Wood, Fire, and Earth. Think of yourself as a powerful river: overflowing at times, or lacking direcgit/git/tion if uncontained. Earth gives you structure and accountability, Fire adds warmth and enthusiasm, and Wood provides channels for growth and creativity.",
       ],
       info2: `Bold & Adventurous: You're naturally daring and confident. Once you set a goal, you charge towards it with strong execution and leader-like charisma. You aren't shy about taking risks – you often enjoy the thrill of new challenges.
 Quick-Witted: Your mind moves fast. You adapt to new situations on the fly and make snap decisions with ease. This mental agility is a huge asset, though your tongue can be just as quick.
 Strong-Willed Leader: Outwardly, you appear generous, broad-minded, and jovial. Yet you harbor a strong desire for control and have firm ideas about how things should go. You like to take charge of situations to ensure success.`,
     },
+    favorableElements:
+      "Empowered Ren Water benefits from Wood, Fire, and Earth elements. Think of yourself as a powerful river: overflowing at times, or lacking direction if uncontained. Earth gives you structure and accountability, Fire adds warmth and enthusiasm, and Wood provides channels for growth and creativity.",
     luck: {
       info1: [
         {
@@ -872,11 +859,11 @@ Strong-Willed Leader: Outwardly, you appear generous, broad-minded, and jovial. 
         "Kevin Systrom: Co-founder of Instagram",
         "Martin Luther King Jr.: Civil rights leader who pushed for the Civil Rights Act and advocated for non-violent resistance",
         "Warren Buffett: Investment legend",
-        "Ludwig van Beethoven: Classical music master who composed the Ninth Symphony after losing his hearing"
+        "Ludwig van Beethoven: Classical music master who composed the Ninth Symphony after losing his hearing",
       ],
       domestic: [
-        "Li Ziqi: Short video creator who spreads traditional Chinese farming culture and promotes international attention to intangible cultural heritage"
-      ]
+        "Li Ziqi: Short video creator who spreads traditional Chinese farming culture and promotes international attention to intangible cultural heritage",
+      ],
     },
     luckSuggestion: {
       color: [
@@ -915,12 +902,13 @@ Strong-Willed Leader: Outwardly, you appear generous, broad-minded, and jovial. 
     personality: {
       info1: [
         "Attuned Ren Water is like gentle streams or pooled water – serene and adaptable, yet waiting for the right currents to join. When its energy is in a 'weak' phase, it might lack the torrential force it craves and needs external connection to gain momentum.",
-        "Favorable Elements: Wood and Metal. Wood feeds your growth and creativity like plants drinking from water, while Metal provides structure and clarity like riverbanks channeling your flow. These elements help you blossom into your full potential.",
       ],
       info2: `Adaptable & Cooperative: You're naturally flexible and have a gift for bringing people together. You're excellent at mediation and collaboration, often serving as the bridge between different groups or ideas.
 Gentle & Insightful: You possess deep emotional intelligence and can read situations with remarkable accuracy. You excel at reading between the lines and understanding what others truly need.
 Connection-Oriented: You thrive when you're connecting and supporting others. Your strength lies not in dominating, but in enabling others to succeed through your insight and facilitation.`,
     },
+    favorableElements:
+      "Attuned Ren Water benefits from Wood and Metal elements. Wood feeds your growth and creativity like plants drinking from water, while Metal provides structure and clarity like riverbanks channeling your flow. These elements help you blossom into your full potential.",
     luck: {
       info1: [
         {
@@ -951,7 +939,7 @@ Connection-Oriented: You thrive when you're connecting and supporting others. Yo
       international: [
         "Ryuichi Sakamoto: Musician and anti-nuclear activist",
         "Bill Gates: Co-founder of Microsoft, supporting vaccine development, poverty elimination and educational reform",
-        "Neil Armstrong: First person to walk on the moon"
+        "Neil Armstrong: First person to walk on the moon",
       ],
       domestic: [
         "Liu Xiang: Olympic track and field champion",
@@ -959,8 +947,8 @@ Connection-Oriented: You thrive when you're connecting and supporting others. Yo
         "Lu Xun: Leader of the New Culture Movement",
         "Lao She: Writer, promoting the development of modern vernacular Chinese",
         "Cai Yuanpei: Educator, president of Peking University, establishing China's modern higher education system",
-        "Yang Zhenning: Nobel Prize winner in physics, promoting Sino-US scientific exchanges and basic discipline construction"
-      ]
+        "Yang Zhenning: Nobel Prize winner in physics, promoting Sino-US scientific exchanges and basic discipline construction",
+      ],
     },
     luckSuggestion: {
       color: [
@@ -997,12 +985,13 @@ Connection-Oriented: You thrive when you're connecting and supporting others. Yo
     personality: {
       info1: [
         "Gui Water is likened to rain and dew. When empowered (strong in energy), Empowered Gui Water surges freely, gifting it with sharp intelligence and insight to keenly sense its environment and emerging trends. Its journey is to realize that countless raindrops need guidance to converge into a river before they can wield great power.",
-        "Favorable Elements: Wood, Fire, and Earth. Empowered Gui Water is like a heavy rain that nourishes everything, yet its energy can disperse in all directions. By drawing on Wood, Fire, and Earth elements, you gain stability and focus.",
       ],
       info2: `Quick Insight: Your mind is agile and perceptive. You adapt swiftly and excel at strategizing, easily seeing the bigger picture.
 Resilient & Decisive: Inside, you're tenacious and bold. You act with confidence and power, though for major decisions it's wise to gather input from others and remain flexible.
 Subtle Authority: You may appear carefree, but you carry a strong desire to be in control. In areas that matter to you, your laid-back exterior conceals a powerful will to lead.`,
     },
+    favorableElements:
+      "Empowered Gui Water benefits from Wood, Fire, and Earth elements. Empowered Gui Water is like a heavy rain that nourishes everything, yet its energy can disperse in all directions. By drawing on Wood, Fire, and Earth elements, you gain stability and focus.",
     luck: {
       info1: [
         {
@@ -1033,14 +1022,14 @@ Subtle Authority: You may appear carefree, but you carry a strong desire to be i
       international: [
         "Mother Teresa: Nobel Peace Prize winner",
         "Hayao Miyazaki: Animation master, conveying environmental concepts, personally donating to protect Japanese natural forests and cultural heritage",
-        "Simone de Beauvoir: Author of the feminist classic 'The Second Sex', revealing the truth that 'women are socially constructed' and promoting global gender equality movements"
+        "Simone de Beauvoir: Author of the feminist classic 'The Second Sex', revealing the truth that 'women are socially constructed' and promoting global gender equality movements",
       ],
       domestic: [
         "Wang Shi: Founder of Vanke",
         "Wang Jianlin: Chairman of Wanda Group",
         "Zhang Chaoyang: Founder of Sohu",
-        "Ba Jin: Writer, criticizing feudal ethics, advocating the establishment of China's Modern Literature Museum in his later years"
-      ]
+        "Ba Jin: Writer, criticizing feudal ethics, advocating the establishment of China's Modern Literature Museum in his later years",
+      ],
     },
     luckSuggestion: {
       color: [
@@ -1079,12 +1068,12 @@ Subtle Authority: You may appear carefree, but you carry a strong desire to be i
     personality: {
       info1: [
         "Gui Water is the element of gentle rain and dew. When attuned (with weaker energy), Attuned Gui Water's flow lacks force and needs nourishment and gathering to build influence. It excels at listening and empathizing, readily absorbing the information and feelings around it.",
-        "Favorable Elements: Metal and Water. Attuned Gui Water is like a delicate trickle that can lack assertiveness and presence. By harnessing supportive Metal and Water energies, you strengthen your decisiveness and mental agility.",
       ],
       info2: `Meticulous & Sensitive: Keenly observant and emotionally sensitive, you adapt to your surroundings with ease and notice details others might miss.
 Rational & Considerate: Outwardly gentle and accepting, you maintain an inner reserve. You carefully weigh pros and cons, though you must guard against over-analyzing choices.
 Gentle yet Steadfast: You have deep emotional needs and value security. Beneath your soft exterior lies a quiet tenacity – when it truly matters, you stand firm.`,
     },
+    favorableElements: "Attuned Gui Water benefits from Metal and Water elements. Attuned Gui Water is like a delicate trickle that can lack assertiveness and presence. By harnessing supportive Metal and Water energies, you strengthen your decisiveness and mental agility.",
     luck: {
       info1: [
         {
@@ -1114,12 +1103,12 @@ Gentle yet Steadfast: You have deep emotional needs and value security. Beneath 
     celebrities: {
       international: [
         "Jackie Chan: International action movie star",
-        "Tim Cook: CEO of Apple"
+        "Tim Cook: CEO of Apple",
       ],
       domestic: [
         "Sanmao: Well-known writer, integrating travel notes, essays and novels, creating the Chinese literary 'wandering narrative' style",
-        "Zhang Yimou: Pioneer of Chinese film internationalization, conveying Eastern cultural spirit through visual aesthetics"
-      ]
+        "Zhang Yimou: Pioneer of Chinese film internationalization, conveying Eastern cultural spirit through visual aesthetics",
+      ],
     },
     luckSuggestion: {
       color: [
@@ -1160,7 +1149,8 @@ Gentle yet Steadfast: You have deep emotional needs and value security. Beneath 
 Pragmatic & Efficient: Highly rational and results-oriented – you focus on efficiency, though at times you may overlook finer details in your drive to get things done.
 Loyal at Heart: Stern and commanding outwardly, yet deeply loyal and trustworthy within. Once you commit to a cause or person, you hold on with near-iron resolve.`,
     },
-    favorableElements: "Empowered Geng Metal benefits from Water and Fire (with a touch of Wood). As hardened steel, Empowered Geng Metal can be overly rigid or stubborn at times. Introducing Water and Fire energies (even a bit of Wood) into your life brings adaptability and balance, tempering your strength with wisdom and flexibility.",
+    favorableElements:
+      "Empowered Geng Metal benefits from Water and Fire (with a touch of Wood). As hardened steel, Empowered Geng Metal can be overly rigid or stubborn at times. Introducing Water and Fire energies (even a bit of Wood) into your life brings adaptability and balance, tempering your strength with wisdom and flexibility.",
     luck: {
       info1: [
         {
@@ -1197,16 +1187,16 @@ Loyal at Heart: Stern and commanding outwardly, yet deeply loyal and trustworthy
         "Osamu Dazai: Influential 20th-century Japanese author famed for his poignant, introspective works that laid bare the human condition",
         "Li Na: Trailblazing tennis champion, the first Asian player to win a Grand Slam singles title, known for her fierce competitive spirit on the court",
         "Chen Kaige: Acclaimed film director (Farewell My Concubine), recognized for his authoritative storytelling and willingness to push creative boundaries",
-        "Confucius (Kong Zi): Ancient Chinese philosopher and teacher whose enduring influence and firm moral vision transformed Eastern society (a true challenger of the status quo of his time)"
+        "Confucius (Kong Zi): Ancient Chinese philosopher and teacher whose enduring influence and firm moral vision transformed Eastern society (a true challenger of the status quo of his time)",
       ],
       domestic: [
-        "Confucius (Kong Zi): Ancient Chinese philosopher and teacher whose enduring influence and firm moral vision transformed Eastern society"
-      ]
+        "Confucius (Kong Zi): Ancient Chinese philosopher and teacher whose enduring influence and firm moral vision transformed Eastern society",
+      ],
     },
     luckSuggestion: {
       dailyTips: [
         "Bring life into your space with green plants – caring for greenery infuses calming Wood energy to balance your Metal nature",
-        "Eat more leafy green vegetables, as their natural vitality nourishes and moderates the excess 'metallic' intensity in your system"
+        "Eat more leafy green vegetables, as their natural vitality nourishes and moderates the excess 'metallic' intensity in your system",
       ],
       color: [
         "Black & Blue (Water): These colors evoke depth and clarity. Black symbolizes profundity, and blue brings calm rationality – together they enhance adaptability and wisdom.",
@@ -1229,7 +1219,8 @@ Loyal at Heart: Stern and commanding outwardly, yet deeply loyal and trustworthy
 Principled & Steadfast: Though gentle on the surface, you have an inner backbone of steel. You refuse to compromise on core principles, sometimes struggling when lofty ideals collide with harsh realities.
 Sensitive & Loyal: You form deep commitments and keep your promises. However, you are wary of whom you trust; it often takes a long, steady relationship for you to truly let down your guard and open up emotionally.`,
     },
-    favorableElements: "Attuned Geng Metal benefits from Earth and Metal. Think of yourself as steel newly forged – not yet hardened. You may lack a bit of confidence or stability at times. Earth energy grounds you and nurtures your growth, while extra Metal reinforces your core strength.",
+    favorableElements:
+      "Attuned Geng Metal benefits from Earth and Metal. Think of yourself as steel newly forged – not yet hardened. You may lack a bit of confidence or stability at times. Earth energy grounds you and nurtures your growth, while extra Metal reinforces your core strength.",
     luck: {
       info1: [
         {
@@ -1266,17 +1257,17 @@ Sensitive & Loyal: You form deep commitments and keep your promises. However, yo
         "Muhammad Ali: Boxing legend renowned not just for his power but for his strategy and wit in the ring. Later in life, he devoted himself to humanitarian causes like Parkinson's research and interfaith dialogue",
         "Paul Newman: Oscar‑winning actor who was as famous for his cool, measured performances as he was for his later philanthropic ventures",
         "Emma Watson: Actress and UN Women Goodwill Ambassador. Known for her intelligent, poised advocacy of girls' education and equality",
-        "Henry Ford: Pioneering industrialist who transformed manufacturing with the assembly line"
+        "Henry Ford: Pioneering industrialist who transformed manufacturing with the assembly line",
       ],
       domestic: [
         "Dong Mingzhu: Powerful businesswoman and chair of Gree Electric. Renowned for her no-nonsense, strategic leadership style",
-        "Yuan Longping: Revered agronomist dubbed the 'Father of Hybrid Rice.' With patient research and innovation, he solved critical food security problems"
-      ]
+        "Yuan Longping: Revered agronomist dubbed the 'Father of Hybrid Rice.' With patient research and innovation, he solved critical food security problems",
+      ],
     },
     luckSuggestion: {
       dailyTips: [
         "Keep a ceramic ornament (like a small vase or figurine) on your desk or in your living space. Earth-element ceramics provide a grounding influence",
-        "Wear a bit of metal each day – whether it's a watch, jewelry, or even metallic fabric – to reinforce your inherent Metal energy"
+        "Wear a bit of metal each day – whether it's a watch, jewelry, or even metallic fabric – to reinforce your inherent Metal energy",
       ],
       color: [
         "White (Metal): White symbolizes clarity and decisiveness. It can strengthen your resolve and give you a sense of poise, like a freshly polished blade ready for action.",
@@ -1299,7 +1290,8 @@ Sensitive & Loyal: You form deep commitments and keep your promises. However, yo
 Meticulous & Rational: Your mind is highly logical and detail-oriented. You strive for perfect accuracy in everything you do. This makes you reliable and thorough, but be careful – excessive rationality or obsession with details might come across as aloof or unyielding to others.
 Adaptable Under Pressure: Though you seem as hard-edged as a blade, you're surprisingly perceptive and flexible when stakes are high. In critical moments, you can pivot and adjust tactics shrewdly, proving that your apparent rigidity hides an inner resourcefulness.`,
     },
-    favorableElements: "Empowered Xin Metal benefits from Water and Fire. As a refined steel, Empowered Xin Metal sometimes errs on the side of rigidity or formality. Welcoming Water energy introduces fluidity and wisdom, helping you loosen up and adapt, while Fire brings warmth and dynamism, fueling you with creativity and boldness.",
+    favorableElements:
+      "Empowered Xin Metal benefits from Water and Fire. As a refined steel, Empowered Xin Metal sometimes errs on the side of rigidity or formality. Welcoming Water energy introduces fluidity and wisdom, helping you loosen up and adapt, while Fire brings warmth and dynamism, fueling you with creativity and boldness.",
     luck: {
       info1: [
         {
@@ -1335,16 +1327,16 @@ Adaptable Under Pressure: Though you seem as hard-edged as a blade, you're surpr
         "Stephen Hawking: Theoretical physicist who unlocked secrets of black holes and the universe with brilliant precision. Despite physical limitations, his sharp intellect and perseverance changed science forever",
         "Jacques Lacan: Innovative psychoanalyst who founded the Paris Freudian school. Known for his exacting, unconventional theories, he challenged established authorities and brought philosophical rigor to psychology",
         "Zendaya: Emmy Award-winning actress admired for her versatility and flawless style. She approaches her roles and public image with a level of thoughtfulness and control that belies her youthful success",
-        "Liu Guoliang: Former Olympic gold medalist in table tennis turned national team coach and sports executive. Famous for his strategic mind, he revolutionized training systems with meticulous planning"
+        "Liu Guoliang: Former Olympic gold medalist in table tennis turned national team coach and sports executive. Famous for his strategic mind, he revolutionized training systems with meticulous planning",
       ],
       domestic: [
-        "Liu Guoliang: Former Olympic gold medalist in table tennis turned national team coach and sports executive"
-      ]
+        "Liu Guoliang: Former Olympic gold medalist in table tennis turned national team coach and sports executive",
+      ],
     },
     luckSuggestion: {
       dailyTips: [
         "Introduce wooden elements into your environment. For example, use a wooden desk organizer or display a small wooden sculpture in your room",
-        "Set your phone or computer wallpaper to a flowing water scene – perhaps a river, waterfall, or ocean waves"
+        "Set your phone or computer wallpaper to a flowing water scene – perhaps a river, waterfall, or ocean waves",
       ],
       color: [
         "Black & Blue (Water): Black represents depth and mystery; blue brings calm and logic. These Water colors help you stay composed and mentally flexible under complex situations.",
@@ -1367,7 +1359,8 @@ Adaptable Under Pressure: Though you seem as hard-edged as a blade, you're surpr
 Quietly Principled: There's a steel core beneath your gentle appearance. Under pressure, you remain outwardly calm and pliant, but you stand firmly by your principles. You dislike open conflict, yet if someone crosses a line you deem inviolable, you will not yield an inch.
 Sensitive & Analytical: Highly observant and thoughtful, you process life through logic and analysis. This means you rarely act rashly, but it can also lead to analysis paralysis – weighing options for so long that opportunities slip by. Building more confidence in your gut instincts and daring to act will help balance this tendency.`,
     },
-    favorableElements: "Attuned Xin Metal benefits from Earth and Metal. In your 'unpolished' form, you might struggle with self-confidence or asserting yourself. Earth energy provides stability, nourishment, and a sense of security, like a supportive soil where you can take root and grow stronger. Additional Metal energy reinforces your inner resolve and clarity.",
+    favorableElements:
+      "Attuned Xin Metal benefits from Earth and Metal. In your 'unpolished' form, you might struggle with self-confidence or asserting yourself. Earth energy provides stability, nourishment, and a sense of security, like a supportive soil where you can take root and grow stronger. Additional Metal energy reinforces your inner resolve and clarity.",
     luck: {
       info1: [
         {
@@ -1403,17 +1396,17 @@ Sensitive & Analytical: Highly observant and thoughtful, you process life throug
         "Angelina Jolie: Hollywood actress and humanitarian. She uses her platform thoughtfully, advocating for children's education, refugees, and wildlife conservation with steady commitment",
         "Lady Gaga: Pop superstar and activist. Beyond her artistic innovation, she's a methodical advocate for LGBTQ+ rights and mental health, even helping raise over $100 million for worthy causes",
         "Marie Curie: Pioneering scientist, the first woman to win a Nobel Prize (and she won it twice). She meticulously researched radioactive elements, ultimately revolutionizing cancer treatment",
-        "Jean‑Paul Sartre: Influential existentialist philosopher known for his phrase 'existence precedes essence.' Sartre was uncompromising in his intellectual ideals and famously even declined the Nobel Prize in Literature to stay true to his principles"
+        "Jean‑Paul Sartre: Influential existentialist philosopher known for his phrase 'existence precedes essence.' Sartre was uncompromising in his intellectual ideals and famously even declined the Nobel Prize in Literature to stay true to his principles",
       ],
       domestic: [
         "Robin Li (Li Yanhong): Co-founder of Baidu, China's top search engine. A tech visionary who quietly and steadily built an Internet empire",
-        "Sun Yat-sen: Leader of the Xinhai Revolution and founding father of modern China. Though a revolutionary, he was known for carefully crafting his ideology ('Three Principles of the People') and persistently uniting people under a common vision"
-      ]
+        "Sun Yat-sen: Leader of the Xinhai Revolution and founding father of modern China. Though a revolutionary, he was known for carefully crafting his ideology ('Three Principles of the People') and persistently uniting people under a common vision",
+      ],
     },
     luckSuggestion: {
       dailyTips: [
         "Wear or carry metal accessories more often – whether it's a favorite piece of jewelry, a metal keychain, or even metallic-framed glasses",
-        "Place a ceramic ornament (like a clay sculpture or ceramic bowl) in your home or workspace. Earth-element objects like ceramics emit a grounding energy that can help calm your nerves"
+        "Place a ceramic ornament (like a clay sculpture or ceramic bowl) in your home or workspace. Earth-element objects like ceramics emit a grounding energy that can help calm your nerves",
       ],
       color: [
         "Yellow (Earth): Yellow brings the energy of stability, nourishment, and comfort. It's an excellent color to help you feel more secure and less anxious.",

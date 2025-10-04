@@ -70,27 +70,27 @@ export default {
         title: 'BaZi Information'
       },
       personality: {
-        icon: '👤',
+        icon: '🌟',
         title: 'Personal Traits'
       },
       character: {
         title: 'Character Traits'
       },
       relationship: {
-        icon: '🤝',
-        title: 'Relationships',
-        friendSuggestion: 'Friendship Advice',
-        coupleSuggestion: 'Love Compatibility'
+        icon: '👥',
+        title: 'Connections & Companions',
+        friendSuggestion: 'Friendship',
+        coupleSuggestion: 'Love & Compatibility'
       },
       luck: {
         icon: '📊',
-        title: 'Fortune Forecast'
+        title: 'Wealth, Health & Heart'
       },
       favorableElements: {
-        title: 'Favorable Elements'
+        title: 'Your Favorable Elements'
       },
       celebrities: {
-        title: 'Celebrities',
+        title: 'Celebrities with Your Energy',
         international: 'International',
         domestic: 'Domestic'
       },
@@ -99,7 +99,7 @@ export default {
         title: 'Auspicious Guidance',
         color: 'Auspicious Colors',
         location: 'Auspicious Directions',
-        tips: 'Auspicious Tips'
+        tips: 'Auspicious Rituals'
       }
     }
   },

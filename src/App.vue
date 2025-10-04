@@ -856,6 +856,150 @@ const formatCareerText = (text) => {
   // 将换行符转换为<br>标签
   return text.replace(/\n/g, '<br>');
 };
+
+// 瀑布流布局相关
+const masonryColumns = ref(3); // 默认3列
+const masonryItems = ref([]); // 存储每列的卡片
+
+// 计算瀑布流布局
+const calculateMasonryLayout = () => {
+  if (!destinyInfo.value) return;
+  
+  // 根据窗口宽度确定列数
+  const width = window.innerWidth;
+  if (width <= 768) {
+    masonryColumns.value = 1;
+  } else if (width <= 1200) {
+    masonryColumns.value = 2;
+  } else {
+    masonryColumns.value = 3;
+  }
+  
+  // 等待 DOM 更新后再计算布局
+  nextTick(() => {
+    // 再次等待，确保所有元素都渲染完成并且高度计算正确
+    setTimeout(() => {
+      layoutMasonryItems();
+    }, 100);
+  });
+};
+
+// 布局瀑布流项目（按列紧凑排列：第4个紧跟第1个下方）
+const layoutMasonryItems = () => {
+  const container = document.querySelector('.result-sections');
+  if (!container) return;
+  
+  const sections = Array.from(container.querySelectorAll('.section'));
+  if (sections.length === 0) return;
+  
+  const columns = masonryColumns.value;
+  const gap = columns === 1 ? 12 : 24;
+  
+  // 计算列宽
+  const columnWidth = (container.offsetWidth - gap * (columns - 1)) / columns;
+  
+  // 存储每列的当前高度（从0开始）
+  const columnHeights = new Array(columns).fill(0);
+  
+  // 存储每个卡片的位置和高度信息
+  const itemsInfo = [];
+  
+  // 先临时设置宽度以便测量正确的高度
+  sections.forEach((section) => {
+    section.style.width = `${columnWidth}px`;
+    section.style.position = 'relative';
+  });
+  
+  // 强制浏览器重新计算布局
+  container.offsetHeight;
+  
+  // 遍历每个卡片，按顺序排列
+  sections.forEach((section, index) => {
+    // 计算当前卡片应该在哪一列（按顺序：0, 1, 2, 0, 1, 2...）
+    const columnIndex = index % columns;
+    
+    // 获取卡片的实际高度
+    const itemHeight = section.getBoundingClientRect().height;
+    
+    // 计算位置
+    // left: 根据列号计算水平位置
+    const left = columnIndex * (columnWidth + gap);
+    // top: 使用该列的当前累积高度
+    const top = columnHeights[columnIndex];
+    
+    // 设置卡片位置
+    section.style.position = 'absolute';
+    section.style.width = `${columnWidth}px`;
+    section.style.left = `${left}px`;
+    section.style.top = `${top}px`;
+    
+    // 存储信息
+    itemsInfo.push({
+      index: index,
+      columnIndex: columnIndex,
+      top: top,
+      left: left,
+      width: columnWidth,
+      height: itemHeight
+    });
+    
+    // 更新该列的高度：当前高度 + 卡片高度 + 间隙
+    columnHeights[columnIndex] = top + itemHeight + gap;
+    
+    // 调试信息：显示前9个卡片
+    if (index < 9) {
+      console.log(`卡片${index + 1}: 列${columnIndex + 1}, 高度=${itemHeight.toFixed(0)}px, top=${top.toFixed(0)}px`);
+    }
+  });
+  
+  // 设置容器高度为最高列的高度
+  const maxHeight = Math.max(...columnHeights);
+  container.style.height = `${maxHeight}px`;
+  container.style.position = 'relative';
+  
+  // 输出布局信息
+  console.log('瀑布流布局完成:', {
+    列数: columns,
+    间隙: gap,
+    列宽: columnWidth.toFixed(0),
+    各列高度: columnHeights.map(h => h.toFixed(0)),
+    卡片总数: sections.length,
+    容器高度: maxHeight.toFixed(0)
+  });
+};
+
+// 监听窗口大小变化
+const resizeObserver = ref(null);
+
+// 在组件挂载后初始化瀑布流
+onMounted(() => {
+  // 监听窗口大小变化
+  window.addEventListener('resize', calculateMasonryLayout);
+  
+  // 使用 ResizeObserver 监听容器大小变化
+  const container = document.querySelector('.result-sections');
+  if (container && window.ResizeObserver) {
+    resizeObserver.value = new ResizeObserver(() => {
+      layoutMasonryItems();
+    });
+    resizeObserver.value.observe(container);
+  }
+});
+
+// 在组件卸载时清理
+onUnmounted(() => {
+  window.removeEventListener('resize', calculateMasonryLayout);
+  if (resizeObserver.value) {
+    resizeObserver.value.disconnect();
+  }
+});
+
+// 监听 destinyInfo 变化，重新计算布局
+watch(destinyInfo, () => {
+  if (destinyInfo.value) {
+    calculateMasonryLayout();
+  }
+}, { deep: true });
 </script>
 
 <style lang="scss" scoped>
@@ -1490,35 +1634,19 @@ const formatCareerText = (text) => {
   }
 
   .result-sections {
-    /* 使用多列布局实现瀑布流，但内容按行顺序排列 */
-    column-count: 3;
-    column-gap: 24px;
-    /* 默认从上到下填充每列 */
+    /* JavaScript 瀑布流布局容器 */
+    position: relative;
+    width: 100%;
+    /* 高度由 JavaScript 动态设置 */
+  }
 
-    /* 中等屏幕 */
-    @media (max-width: 1200px) {
-      column-count: 2;
-      column-gap: 20px;
-    }
-
-    /* 小平板屏幕 */
-    @media (max-width: 900px) {
-      column-count: 2;
-      column-gap: 18px;
-    }
-
-    .section {
+  .section {
       background: linear-gradient(135deg, #ffffff 0%, #fdfcfb 100%);
       border-radius: 16px;
       padding: 28px;
       box-sizing: border-box;
-      margin-bottom: 20px;
-      /* 防止卡片在列之间断裂 */
-      break-inside: avoid;
-      page-break-inside: avoid;
-      /* 使用 inline-block 确保瀑布流效果 */
-      display: inline-block;
-      width: 100%;
+      /* margin 由 JavaScript 瀑布流布局控制，这里不需要 */
+      margin: 0;
       /* 更精致的阴影 */
       box-shadow: 0 2px 8px rgba(139, 115, 85, 0.08), 
                   0 1px 2px rgba(139, 115, 85, 0.04);
@@ -1901,7 +2029,6 @@ const formatCareerText = (text) => {
       }
     }
   }
-}
 
 @media (max-width: 768px) {
   .container {
@@ -2069,13 +2196,14 @@ const formatCareerText = (text) => {
     box-sizing: border-box;
     
     .result-sections {
-      column-count: 1; /* 移动端单列 */
-      column-gap: 0;
+      /* 移动端瀑布流由 JavaScript 处理，无需额外样式 */
+      position: relative;
     }
 
     .section {
       padding: 20px;
-      margin-bottom: 12px;
+      /* margin 由 JavaScript 控制 */
+      margin: 0;
     }
   }
 
