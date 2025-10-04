@@ -287,7 +287,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from "vue";
+import { ref, onMounted, onUnmounted, computed, watch } from "vue";
 import { ElMessage } from "element-plus";
 import "element-plus/dist/index.css";
 import { locationData } from "./data/locationData";
@@ -296,7 +296,7 @@ import { calculateSolarTime } from "./utils/solarTime";
 import { getLocationInfo } from "./data/locationData";
 import { calculateBaZi } from "./utils/bazi";
 import { analyzeStrength } from "./utils/strength";
-import { destinyData } from "./data/destinyData";
+import { findDestinyByKey } from "./data";
 // 导入新的 Leaflet 地理位置服务
 import { 
   getCountries, 
@@ -326,6 +326,7 @@ const baziInfo = ref({
   bazi: '',
   solarTime: ''
 });
+const lastCalculatedStrength = ref(null); // 保存上次计算的身强身弱结果
 
 // 地理位置服务选择（默认使用国际方案，传统方案已隐藏但保留功能）
 const locationService = ref('leaflet'); // 'traditional' 或 'leaflet'
@@ -395,6 +396,15 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener("resize", checkMobile);
+});
+
+// 监听语言变化，自动重新加载命理数据
+watch(locale, (newLocale) => {
+  // 如果已经有计算结果，切换语言时重新加载对应语言的数据
+  if (lastCalculatedStrength.value && destinyInfo.value) {
+    destinyInfo.value = findDestinyByKey(lastCalculatedStrength.value, newLocale);
+    console.log('语言已切换为:', newLocale === 'zh-CN' ? '中文' : 'English');
+  }
 });
 
 // Leaflet 地理位置服务方法
@@ -656,9 +666,12 @@ const handleSubmit = () => {
 
   // 分析身强身弱
   const strength = analyzeStrength(bazi);
+  
+  // 保存计算结果，用于语言切换
+  lastCalculatedStrength.value = strength;
 
-  // 查找对应的命理数据（使用key字段进行索引）
-  destinyInfo.value = destinyData.find(item => item.key === strength);
+  // 查找对应的命理数据（使用key字段进行索引，根据当前语言）
+  destinyInfo.value = findDestinyByKey(strength, locale.value);
   
   console.log('命理信息：', {
     地理位置服务: locationService.value === 'traditional' ? '传统方案' : 'Leaflet国际方案',
