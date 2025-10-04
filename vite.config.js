@@ -3,7 +3,7 @@ import vue from "@vitejs/plugin-vue";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/bazi/',
+  base: '/',
   plugins: [vue()],
   build: {
     outDir: 'dist', // 输出目录
