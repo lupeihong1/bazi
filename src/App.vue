@@ -186,7 +186,7 @@
 
     <div v-if="destinyInfo" class="destiny-result">
       <div class="result-header">
-        <h2>{{ t('result.title', { key: destinyInfo.key, name: destinyInfo.name }) }}</h2>
+        <h2>{{ locale === 'en-US' ? `${destinyInfo.name}` : t('result.title', { key: destinyInfo.key, name: destinyInfo.name }) }}</h2>
         <div class="result-time">{{ t('result.calculationTime', { time: new Date().toLocaleString() }) }}</div>
       </div>
 
@@ -197,7 +197,7 @@
             <div class="section-title">{{ t('result.sections.personality.title') }}</div>
             <div class="section-content">
               <div class="birth-info">
-                {{ t('result.bazi', { bazi: baziInfo.bazi }) }}<br>
+                {{ t('result.bazi', { bazi: locale === 'en-US' ? baziInfo.baziEn : baziInfo.bazi }) }}<br>
                 {{ t('result.solarTime', { time: baziInfo.solarTime }) }}
               </div>
               <div v-for="(info, index) in destinyInfo.personality.info1" :key="index" class="info-item">
@@ -316,6 +316,34 @@ import LanguageSwitcher from "./components/LanguageSwitcher.vue";
 // 使用国际化
 const { t, locale, setLocale } = useI18n();
 
+// 天干地支英文映射
+const tianganMap = {
+  '甲': 'Jia Wood', '乙': 'Yi Wood',
+  '丙': 'Bing Fire', '丁': 'Ding Fire',
+  '戊': 'Wu Earth', '己': 'Ji Earth',
+  '庚': 'Geng Metal', '辛': 'Xin Metal',
+  '壬': 'Ren Water', '癸': 'Gui Water'
+};
+
+const dizhiMap = {
+  '子': 'Zi', '丑': 'Chou', '寅': 'Yin', '卯': 'Mao',
+  '辰': 'Chen', '巳': 'Si', '午': 'Wu', '未': 'Wei',
+  '申': 'Shen', '酉': 'You', '戌': 'Xu', '亥': 'Hai'
+};
+
+// 转换为英文八字
+const convertBaZiToEnglish = (baziStr) => {
+  const parts = baziStr.split(' ');
+  return parts.map(part => {
+    if (part.length >= 2) {
+      const tiangan = part[0];
+      const dizhi = part[1];
+      return `${tianganMap[tiangan] || tiangan}-${dizhiMap[dizhi] || dizhi}`;
+    }
+    return part;
+  }).join(' ');
+};
+
 const birthDate = ref("");
 const location = ref([]);
 const birthHour = ref("");
@@ -324,7 +352,8 @@ const isMobile = ref(false);
 const destinyInfo = ref(null);
 const baziInfo = ref({
   bazi: '',
-  solarTime: ''
+  solarTime: '',
+  baziEn: '' // 英文八字
 });
 const lastCalculatedStrength = ref(null); // 保存上次计算的身强身弱结果
 
@@ -659,9 +688,11 @@ const handleSubmit = () => {
   const bazi = calculateBaZi(targetDate, !!coordinates, coordinates?.lng, coordinates?.lat);
   
   // 更新八字信息
+  const baziStr = `${bazi.年柱} ${bazi.月柱} ${bazi.日柱} ${bazi.时柱}`;
   baziInfo.value = {
-    bazi: `${bazi.年柱} ${bazi.月柱} ${bazi.日柱} ${bazi.时柱}`,
-    solarTime: targetDate.toLocaleString()
+    bazi: baziStr,
+    solarTime: targetDate.toLocaleString(),
+    baziEn: convertBaZiToEnglish(baziStr)
   };
 
   // 分析身强身弱
