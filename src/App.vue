@@ -1536,7 +1536,7 @@ const getImageUrl = (name) => {
               gap: 2px;
               
               &:before {
-                content: "📍 坐标信息:";
+                content: "📍";
                 font-size: 12px;
               }
             }
