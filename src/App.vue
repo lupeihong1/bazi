@@ -188,94 +188,149 @@
       <div class="result-header">
         <h2>{{ locale === 'en-US' ? `${destinyInfo.name}` : t('result.title', { key: destinyInfo.key, name: destinyInfo.name }) }}</h2>
         <div class="result-time">{{ t('result.calculationTime', { time: new Date().toLocaleString() }) }}</div>
+        <!-- 八字信息 -->
+        <div class="bazi-info">
+          <div class="bazi-text">
+            {{ t('result.bazi', { bazi: locale === 'en-US' ? baziInfo.baziEn : baziInfo.bazi }) }}
+          </div>
+          <div class="solar-time">
+            {{ t('result.solarTime', { time: baziInfo.solarTime }) }}
+          </div>
+        </div>
       </div>
 
       <div class="result-sections">
-        <div class="left-section">
-          <div class="section">
-            <div class="section-icon">{{ t('result.sections.personality.icon') }}</div>
-            <div class="section-title">{{ t('result.sections.personality.title') }}</div>
-            <div class="section-content">
-              <div class="birth-info">
-                {{ t('result.bazi', { bazi: locale === 'en-US' ? baziInfo.baziEn : baziInfo.bazi }) }}<br>
-                {{ t('result.solarTime', { time: baziInfo.solarTime }) }}
-              </div>
-              <div v-for="(info, index) in destinyInfo.personality.info1" :key="index" class="info-item">
-                {{ info }}
-              </div>
-              <div class="info-detail">{{ destinyInfo.personality.info2 }}</div>
+        <!-- 个人特质板块 -->
+        <div class="section">
+          <div class="section-icon">🌟</div>
+          <div class="section-title">{{ t('result.sections.personality.title') }}</div>
+          <div class="section-content">
+            <div v-for="(info, index) in destinyInfo.personality.info1" :key="index" class="info-item">
+              {{ info }}
             </div>
           </div>
+        </div>
 
-          <div class="section">
-            <div class="section-icon">{{ t('result.sections.relationship.icon') }}</div>
-            <div class="section-title">{{ t('result.sections.relationship.title') }}</div>
-            <div class="section-content">
-              <div class="relation-group">
-                <div class="group-title">{{ t('result.sections.relationship.friendSuggestion') }}</div>
-                <div v-for="(item, index) in destinyInfo.relationship.friendSuggestion" :key="index" class="relation-item">
-                  {{ item }}
+        <!-- 性格特征板块 -->
+        <div class="section">
+          <div class="section-icon">💭</div>
+          <div class="section-title">{{ t('result.sections.character.title') }}</div>
+          <div class="section-content">
+            <div class="character-traits">
+              {{ destinyInfo.personality.info2 }}
+            </div>
+          </div>
+        </div>
+
+        <!-- 喜用神板块 -->
+        <div class="section">
+          <div class="section-icon">⚡</div>
+          <div class="section-title">{{ t('result.sections.favorableElements.title') }}</div>
+          <div class="section-content">
+            <div class="favorable-elements">
+              {{ destinyInfo.favorableElements }}
+            </div>
+          </div>
+        </div>
+
+        <!-- 人际关系板块 -->
+        <div class="section">
+          <div class="section-icon">👥</div>
+          <div class="section-title">{{ t('result.sections.relationship.title') }}</div>
+          <div class="section-content">
+            <div class="relation-group">
+              <div class="group-title">{{ t('result.sections.relationship.friendSuggestion') }}</div>
+              <div v-for="(item, index) in destinyInfo.relationship.friendSuggestion" :key="index" class="relation-item">
+                {{ item }}
+              </div>
+            </div>
+            <div class="relation-group">
+              <div class="group-title">{{ t('result.sections.relationship.coupleSuggestion') }}</div>
+              <div v-for="(item, index) in destinyInfo.relationship.coupleSuggestion" :key="index" class="relation-item">
+                {{ item }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 运势解读板块 -->
+        <div class="section">
+          <div class="section-icon">🔮</div>
+          <div class="section-title">{{ t('result.sections.luck.title') }}</div>
+          <div class="section-content">
+            <div v-for="(item, index) in destinyInfo.luck.info1" :key="index" class="fortune-item">
+              <div class="fortune-title">{{ item.title }}</div>
+              <!-- 特殊处理职业管理，分成推荐和慎重两段 -->
+              <template v-if="item.title === '职业管理'">
+                <div class="career-sections">
+                  <div class="career-recommended" v-if="item.desc.includes('推荐行业')">
+                    <div class="career-label">✦ 推荐行业</div>
+                    <div class="career-text" v-html="formatCareerText(extractCareerSection(item.desc, '推荐行业'))"></div>
+                  </div>
+                  <div class="career-caution" v-if="item.desc.includes('慎重行业')">
+                    <div class="career-label">⚠ 慎重行业</div>
+                    <div class="career-text" v-html="formatCareerText(extractCareerSection(item.desc, '慎重行业'))"></div>
+                  </div>
+                </div>
+              </template>
+              <!-- 其他普通项目 -->
+              <div v-else class="fortune-desc">{{ item.desc }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 同频名人板块 -->
+        <div class="section" v-if="destinyInfo.celebrities">
+          <div class="section-icon">⭐</div>
+          <div class="section-title">{{ t('result.sections.celebrities.title') }}</div>
+          <div class="section-content">
+            <div class="celebrities-group" v-if="destinyInfo.celebrities.international && destinyInfo.celebrities.international.length">
+              <div class="group-title">{{ t('result.sections.celebrities.international') }}</div>
+              <div class="celebrities-items">
+                <div v-for="(celebrity, index) in destinyInfo.celebrities.international" :key="index" class="celebrity-item">
+                  {{ celebrity }}
                 </div>
               </div>
-              <div class="relation-group">
-                <div class="group-title">{{ t('result.sections.relationship.coupleSuggestion') }}</div>
-                <div v-for="(item, index) in destinyInfo.relationship.coupleSuggestion" :key="index" class="relation-item">
-                  {{ item }}
+            </div>
+            <div class="celebrities-group" v-if="destinyInfo.celebrities.domestic && destinyInfo.celebrities.domestic.length">
+              <div class="group-title">{{ t('result.sections.celebrities.domestic') }}</div>
+              <div class="celebrities-items">
+                <div v-for="(celebrity, index) in destinyInfo.celebrities.domestic" :key="index" class="celebrity-item">
+                  {{ celebrity }}
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="right-section">
-          <div class="section">
-            <div class="section-icon">{{ t('result.sections.luck.icon') }}</div>
-            <div class="section-title">{{ t('result.sections.luck.title') }}</div>
-            <div class="section-content">
-              <div v-for="(item, index) in destinyInfo.luck.info1" :key="index" class="fortune-item">
-                <div class="fortune-title">{{ item.title }}</div>
-                <div class="fortune-desc">{{ item.desc }}</div>
+        <!-- 开运tips板块 -->
+        <div class="section">
+          <div class="section-icon">✨</div>
+          <div class="section-title">{{ t('result.sections.luckSuggestion.tips') }}</div>
+          <div class="section-content">
+            <!-- 日常提示 -->
+            <div class="tips-items" v-if="destinyInfo.luckSuggestion.dailyTips && destinyInfo.luckSuggestion.dailyTips.length">
+              <div v-for="(tip, index) in destinyInfo.luckSuggestion.dailyTips" :key="index" class="tip-item">
+                {{ tip }}
               </div>
             </div>
-          </div>
-
-          <div class="section">
-            <div class="section-icon">{{ t('result.sections.luckSuggestion.icon') }}</div>
-            <div class="section-title">{{ t('result.sections.luckSuggestion.title') }}</div>
-            <div class="section-content">
-              <div class="advice-group">
-                <div class="advice-title">{{ t('result.sections.luckSuggestion.color') }}</div>
-                <div class="advice-items">
-                  <div v-for="(color, index) in destinyInfo.luckSuggestion.color" :key="index" class="tag-item">
-                    {{ color }}
-                  </div>
+            
+            <!-- 开运颜色 -->
+            <div class="tips-section" v-if="destinyInfo.luckSuggestion.color && destinyInfo.luckSuggestion.color.length">
+              <div class="tips-section-title">🎨 {{ t('result.sections.luckSuggestion.color') }}</div>
+              <div class="tips-items">
+                <div v-for="(color, index) in destinyInfo.luckSuggestion.color" :key="index" class="tip-item">
+                  {{ color }}
                 </div>
               </div>
-
-              <div class="advice-group">
-                <div class="advice-title">{{ t('result.sections.luckSuggestion.location') }}</div>
-                <div class="advice-items">
-                  <div v-for="(location, index) in destinyInfo.luckSuggestion.location" :key="index" class="tag-item">
-                    {{ location }}
-                  </div>
-                </div>
-              </div>
-
-              <div class="advice-group">
-                <div class="advice-title">{{ t('result.sections.luckSuggestion.career') }}</div>
-                <div class="advice-items">
-                  <div v-for="(career, index) in destinyInfo.career.needCareer" :key="index" class="tag-item">
-                    {{ career }}
-                  </div>
-                </div>
-              </div>
-
-              <div class="advice-group">
-                <div class="advice-title">{{ t('result.sections.luckSuggestion.tips') }}</div>
-                <div class="tips-items">
-                  <div v-for="(tip, index) in destinyInfo.luckTips" :key="index" class="tip-item">
-                    {{ tip }}
-                  </div>
+            </div>
+            
+            <!-- 开运方位 -->
+            <div class="tips-section" v-if="destinyInfo.luckSuggestion.location && destinyInfo.luckSuggestion.location.length">
+              <div class="tips-section-title">🧭 {{ t('result.sections.luckSuggestion.location') }}</div>
+              <div class="tips-items">
+                <div v-for="(loc, index) in destinyInfo.luckSuggestion.location" :key="index" class="tip-item">
+                  {{ loc }}
                 </div>
               </div>
             </div>
@@ -287,7 +342,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed, watch } from "vue";
+import { ref, onMounted, onUnmounted, computed, watch, nextTick } from "vue";
 import { ElMessage } from "element-plus";
 import "element-plus/dist/index.css";
 import { locationData } from "./data/locationData";
@@ -728,13 +783,89 @@ const handleSubmit = () => {
 const getImageUrl = (name) => {
   return `/images/destiny/${name}.png`;
 };
+
+// 提取职业管理中的推荐行业或慎重行业部分
+const extractCareerSection = (desc, section) => {
+  if (!desc) return '';
+  
+  if (section === '推荐行业') {
+    // 提取"推荐行业："后面的内容，到"。慎重行业"之前
+    // 先找到推荐行业的起始位置
+    const startMatch = desc.match(/推荐行业[：:]/);
+    if (!startMatch) return '';
+    
+    const startIndex = startMatch.index + startMatch[0].length;
+    // 找到"。慎重行业"的位置
+    const endMatch = desc.substring(startIndex).match(/[。．]\s*慎重行业/);
+    
+    let result = '';
+    if (endMatch) {
+      // 提取到"。慎重行业"之前
+      result = desc.substring(startIndex, startIndex + endMatch.index);
+    } else {
+      // 如果没找到，就提取到第一个句号
+      const dotMatch = desc.substring(startIndex).match(/[。．]/);
+      if (dotMatch) {
+        result = desc.substring(startIndex, startIndex + dotMatch.index);
+      } else {
+        result = desc.substring(startIndex);
+      }
+    }
+    
+    // 格式化为分行显示
+    return formatCareerDescription(result.trim());
+  } else if (section === '慎重行业') {
+    // 提取"慎重行业："后面的内容
+    const startMatch = desc.match(/慎重行业[：:]/);
+    if (!startMatch) return '';
+    
+    const startIndex = startMatch.index + startMatch[0].length;
+    let result = desc.substring(startIndex);
+    
+    // 移除末尾的句号
+    result = result.replace(/[。．]+$/, '').trim();
+    return formatCareerDescription(result);
+  }
+  
+  return desc;
+};
+
+// 格式化职业描述为分行显示
+const formatCareerDescription = (text) => {
+  if (!text) return '';
+  
+  // 按句号分割
+  const items = text.split(/[。．]/).filter(item => item.trim());
+  
+  return items.map(item => {
+    const trimmed = item.trim();
+    // 如果有冒号，说明是有详细描述的行业
+    if (trimmed.includes('：') || trimmed.includes(':')) {
+      return trimmed;
+    } else {
+      // 如果是单个行业名称，前面加上项目符号
+      return `• ${trimmed}`;
+    }
+  }).join('\n');
+};
+
+// 格式化职业文本为HTML显示（处理换行）
+const formatCareerText = (text) => {
+  if (!text) return '';
+  
+  // 将换行符转换为<br>标签
+  return text.replace(/\n/g, '<br>');
+};
 </script>
 
 <style lang="scss" scoped>
 .container {
   width: 100%;
+  max-width: 100vw; /* 防止超出视口 */
   min-height: 100vh;
   padding: 40px 0;
+  overflow-x: hidden; /* 防止横向滚动 */
+  box-sizing: border-box;
 
   .form-container,
   .result-container {
@@ -1313,10 +1444,11 @@ const getImageUrl = (name) => {
   background-color: #ffffff;
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-  width: 85%;
-  max-width: 1000px;
+  width: 90%;
+  max-width: 1400px; /* 增加最大宽度以更好利用大屏幕 */
   margin: 0 auto 40px;
   padding: 40px 50px;
+  box-sizing: border-box;
 
   .result-header {
     margin-bottom: 30px;
@@ -1330,35 +1462,106 @@ const getImageUrl = (name) => {
     .result-time {
       color: #999;
       font-size: 14px;
+      margin-bottom: 12px;
+    }
+
+    .bazi-info {
+      margin-top: 16px;
+      padding: 16px 20px;
+      background: linear-gradient(135deg, rgba(160, 137, 104, 0.08) 0%, rgba(160, 137, 104, 0.04) 100%);
+      border-radius: 12px;
+      border: 1px solid rgba(139, 115, 85, 0.12);
+      box-shadow: 0 1px 3px rgba(139, 115, 85, 0.06);
+
+      .bazi-text {
+        color: #4a4a4a;
+        font-size: 14.5px;
+        margin-bottom: 8px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        font-family: "Courier New", monospace;
+      }
+
+      .solar-time {
+        color: #7a7a7a;
+        font-size: 13px;
+      }
     }
   }
 
   .result-sections {
-    display: flex;
-    gap: 24px;
+    /* 使用多列布局实现瀑布流，但内容按行顺序排列 */
+    column-count: 3;
+    column-gap: 24px;
+    /* 默认从上到下填充每列 */
 
-    .left-section, .right-section {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
+    /* 中等屏幕 */
+    @media (max-width: 1200px) {
+      column-count: 2;
+      column-gap: 20px;
+    }
+
+    /* 小平板屏幕 */
+    @media (max-width: 900px) {
+      column-count: 2;
+      column-gap: 18px;
     }
 
     .section {
-      background: #faf7f2;
-      border-radius: 12px;
-      padding: 24px;
+      background: linear-gradient(135deg, #ffffff 0%, #fdfcfb 100%);
+      border-radius: 16px;
+      padding: 28px;
+      box-sizing: border-box;
+      margin-bottom: 20px;
+      /* 防止卡片在列之间断裂 */
+      break-inside: avoid;
+      page-break-inside: avoid;
+      /* 使用 inline-block 确保瀑布流效果 */
+      display: inline-block;
+      width: 100%;
+      /* 更精致的阴影 */
+      box-shadow: 0 2px 8px rgba(139, 115, 85, 0.08), 
+                  0 1px 2px rgba(139, 115, 85, 0.04);
+      border: 1px solid rgba(139, 115, 85, 0.08);
+      /* 添加过渡效果 */
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(139, 115, 85, 0.12), 
+                    0 2px 4px rgba(139, 115, 85, 0.06);
+        border-color: rgba(139, 115, 85, 0.15);
+      }
 
       .section-icon {
-        font-size: 20px;
-        margin-bottom: 12px;
+        font-size: 24px;
+        margin-bottom: 16px;
+        display: inline-block;
+        padding: 8px 12px;
+        background: rgba(139, 115, 85, 0.06);
+        border-radius: 10px;
+        line-height: 1;
       }
 
       .section-title {
-        font-size: 18px;
-        color: #8b7355;
+        font-size: 17px;
+        color: #6b5c4d;
         margin-bottom: 20px;
-        font-weight: 500;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        position: relative;
+        padding-bottom: 12px;
+        
+        &:after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 30px;
+          height: 3px;
+          background: linear-gradient(90deg, #a08968, transparent);
+          border-radius: 2px;
+        }
       }
 
       .section-content {
@@ -1369,93 +1572,328 @@ const getImageUrl = (name) => {
         }
 
         .info-item {
-          margin-bottom: 12px;
-          color: #333;
-          line-height: 1.6;
+          margin-bottom: 14px;
+          color: #4a4a4a;
+          line-height: 1.7;
+          font-size: 14.5px;
+          padding-left: 16px;
+          position: relative;
+          
+          &:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 8px;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #a08968;
+          }
+
+          &:last-child {
+            margin-bottom: 0;
+          }
         }
 
-        .info-detail {
-          color: #666;
-          line-height: 1.8;
-          margin-top: 16px;
+        .character-traits {
+          color: #5a5a5a;
+          line-height: 1.9;
           white-space: pre-line;
+          padding: 18px 20px;
+          background: linear-gradient(135deg, rgba(139, 115, 85, 0.04) 0%, rgba(139, 115, 85, 0.02) 100%);
+          border-radius: 12px;
+          border-left: 3px solid #a08968;
+          font-size: 14.5px;
         }
 
         .relation-group {
+          margin-bottom: 24px;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+
+          .group-title {
+            color: #7a6a58;
+            font-size: 15px;
+            margin-bottom: 14px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+          }
+
+          .relation-item {
+            color: #5a5a5a;
+            margin-bottom: 10px;
+            padding-left: 18px;
+            position: relative;
+            line-height: 1.7;
+            font-size: 14.5px;
+
+            &:before {
+              content: "●";
+              position: absolute;
+              left: 0;
+              color: #a08968;
+              font-size: 10px;
+              top: 6px;
+            }
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+        }
+
+        .fortune-item {
+          margin-bottom: 22px;
+          padding-bottom: 22px;
+          border-bottom: 1px solid rgba(139, 115, 85, 0.08);
+
+          &:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+          }
+
+          .fortune-title {
+            color: #7a6a58;
+            font-size: 15px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(139, 115, 85, 0.06);
+            border-radius: 6px;
+          }
+
+          .fortune-desc {
+            color: #5a5a5a;
+            line-height: 1.8;
+            font-size: 14.5px;
+          }
+
+          .career-sections {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+
+            .career-recommended,
+            .career-caution {
+              padding: 14px 16px;
+              border-radius: 10px;
+              background: linear-gradient(135deg, rgba(139, 115, 85, 0.04) 0%, rgba(139, 115, 85, 0.02) 100%);
+              border: 1px solid rgba(139, 115, 85, 0.1);
+
+              .career-label {
+                color: #7a6a58;
+                font-size: 14px;
+                font-weight: 600;
+                margin-bottom: 8px;
+                letter-spacing: 0.2px;
+              }
+
+              .career-text {
+                color: #5a5a5a;
+                line-height: 1.8;
+                font-size: 14px;
+              }
+            }
+
+            .career-recommended {
+              border-left: 3px solid #6b9d7a;
+              
+              .career-label {
+                color: #5a8566;
+              }
+            }
+
+            .career-caution {
+              border-left: 3px solid #c89060;
+              background: linear-gradient(135deg, rgba(200, 144, 96, 0.04) 0%, rgba(200, 144, 96, 0.02) 100%);
+              
+              .career-label {
+                color: #b8805a;
+              }
+            }
+          }
+        }
+
+        .career-group {
           margin-bottom: 24px;
 
           .group-title {
             color: #8b7355;
             font-size: 16px;
             margin-bottom: 12px;
+            font-weight: 500;
           }
 
-          .relation-item {
-            color: #666;
-            margin-bottom: 8px;
-            padding-left: 12px;
-            position: relative;
-
-            &:before {
-              content: "•";
-              position: absolute;
-              left: 0;
-              color: #8b7355;
-            }
-          }
-        }
-
-        .fortune-item {
-          margin-bottom: 20px;
-
-          .fortune-title {
-            color: #8b7355;
-            font-size: 16px;
-            margin-bottom: 8px;
-          }
-
-          .fortune-desc {
-            color: #666;
-            line-height: 1.6;
-          }
-        }
-
-        .advice-group {
-          margin-bottom: 24px;
-
-          .advice-title {
-            color: #8b7355;
-            font-size: 16px;
-            margin-bottom: 12px;
-          }
-
-          .advice-items {
+          .career-items {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
 
-            .tag-item {
+            .career-item {
               background: #fff;
-              padding: 6px 12px;
+              padding: 8px 12px;
               border-radius: 16px;
               font-size: 14px;
               color: #666;
               border: 1px solid rgba(139, 115, 85, 0.2);
+              transition: all 0.3s ease;
+
+              &:hover {
+                background: rgba(139, 115, 85, 0.05);
+                border-color: #8b7355;
+              }
+
+              &.avoid {
+                background: rgba(245, 108, 108, 0.1);
+                border-color: rgba(245, 108, 108, 0.3);
+                color: #f56c6c;
+
+                &:hover {
+                  background: rgba(245, 108, 108, 0.15);
+                  border-color: #f56c6c;
+                }
+              }
             }
           }
+        }
 
-          .tips-items {
-            .tip-item {
-              color: #666;
-              margin-bottom: 8px;
-              padding-left: 12px;
-              position: relative;
+        .color-items {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
 
-              &:before {
-                content: "•";
-                position: absolute;
-                left: 0;
-                color: #8b7355;
+          .color-item {
+            background: #fff;
+            padding: 8px 12px;
+            border-radius: 16px;
+            font-size: 14px;
+            color: #666;
+            border: 1px solid rgba(139, 115, 85, 0.2);
+            transition: all 0.3s ease;
+
+            &:hover {
+              background: rgba(139, 115, 85, 0.05);
+              border-color: #8b7355;
+            }
+          }
+        }
+
+        .location-items {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+
+          .location-item {
+            background: #fff;
+            padding: 8px 12px;
+            border-radius: 16px;
+            font-size: 14px;
+            color: #666;
+            border: 1px solid rgba(139, 115, 85, 0.2);
+            transition: all 0.3s ease;
+
+            &:hover {
+              background: rgba(139, 115, 85, 0.05);
+              border-color: #8b7355;
+            }
+          }
+        }
+
+        .tips-section {
+          margin-top: 20px;
+          padding-top: 20px;
+          border-top: 1px solid rgba(139, 115, 85, 0.1);
+
+          &:first-child {
+            margin-top: 0;
+            padding-top: 0;
+            border-top: none;
+          }
+
+          .tips-section-title {
+            color: #7a6a58;
+            font-size: 14.5px;
+            font-weight: 600;
+            margin-bottom: 14px;
+            letter-spacing: 0.2px;
+          }
+        }
+
+        .tips-items {
+          .tip-item {
+            color: #5a5a5a;
+            margin-bottom: 12px;
+            padding-left: 18px;
+            position: relative;
+            line-height: 1.7;
+            font-size: 14.5px;
+
+            &:before {
+              content: "✦";
+              position: absolute;
+              left: 0;
+              color: #a08968;
+              font-size: 12px;
+              top: 2px;
+            }
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+        }
+
+        .favorable-elements {
+          color: #5a5a5a;
+          line-height: 1.8;
+          padding: 18px 20px;
+          background: linear-gradient(135deg, rgba(160, 137, 104, 0.06) 0%, rgba(160, 137, 104, 0.02) 100%);
+          border-radius: 12px;
+          border-left: 3px solid #a08968;
+          font-size: 14.5px;
+          box-shadow: 0 1px 3px rgba(139, 115, 85, 0.04);
+        }
+
+        .celebrities-group {
+          margin-bottom: 24px;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+
+          .group-title {
+            color: #7a6a58;
+            font-size: 15px;
+            margin-bottom: 14px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+          }
+
+          .celebrities-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+
+            .celebrity-item {
+              background: linear-gradient(135deg, #ffffff 0%, #fdfcfb 100%);
+              padding: 9px 14px;
+              border-radius: 20px;
+              font-size: 13.5px;
+              color: #5a5a5a;
+              border: 1px solid rgba(139, 115, 85, 0.12);
+              transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+              box-shadow: 0 1px 3px rgba(139, 115, 85, 0.05);
+
+              &:hover {
+                background: linear-gradient(135deg, rgba(160, 137, 104, 0.08) 0%, rgba(160, 137, 104, 0.04) 100%);
+                border-color: #a08968;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 6px rgba(139, 115, 85, 0.1);
               }
             }
           }
@@ -1624,18 +2062,27 @@ const getImageUrl = (name) => {
 
   .destiny-result {
     width: 90%;
-    max-width: none;
+    max-width: calc(100vw - 40px); /* 确保不超出视口 */
     margin: 0 auto 20px;
     padding: 24px 20px;
     border-radius: 12px;
+    box-sizing: border-box;
     
     .result-sections {
-      flex-direction: column;
+      column-count: 1; /* 移动端单列 */
+      column-gap: 0;
     }
 
     .section {
       padding: 20px;
+      margin-bottom: 12px;
     }
+  }
+
+  .form-container {
+    width: 90%;
+    max-width: calc(100vw - 40px); /* 确保不超出视口 */
+    box-sizing: border-box;
   }
 }
 </style>

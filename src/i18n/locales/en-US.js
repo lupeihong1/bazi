@@ -66,9 +66,15 @@ export default {
     bazi: 'BaZi: {bazi}',
     solarTime: 'True Solar Time: {time}',
     sections: {
+      bazi: {
+        title: 'BaZi Information'
+      },
       personality: {
         icon: '👤',
         title: 'Personal Traits'
+      },
+      character: {
+        title: 'Character Traits'
       },
       relationship: {
         icon: '🤝',
@@ -80,12 +86,19 @@ export default {
         icon: '📊',
         title: 'Fortune Forecast'
       },
+      favorableElements: {
+        title: 'Favorable Elements'
+      },
+      celebrities: {
+        title: 'Celebrities',
+        international: 'International',
+        domestic: 'Domestic'
+      },
       luckSuggestion: {
         icon: '✨',
         title: 'Auspicious Guidance',
         color: 'Auspicious Colors',
         location: 'Auspicious Directions',
-        career: 'Suitable Careers',
         tips: 'Auspicious Tips'
       }
     }

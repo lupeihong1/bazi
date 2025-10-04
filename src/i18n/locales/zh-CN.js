@@ -66,26 +66,39 @@ export default {
     bazi: '生辰八字：{bazi}',
     solarTime: '真太阳时：{time}',
     sections: {
+      bazi: {
+        title: '八字信息'
+      },
       personality: {
         icon: '👤',
-        title: '个人特征'
+        title: '个人特质'
+      },
+      character: {
+        title: '性格特征'
       },
       relationship: {
         icon: '🤝',
         title: '人际关系',
         friendSuggestion: '交友建议',
-        coupleSuggestion: '适配伴侣'
+        coupleSuggestion: '速配伴侣'
       },
       luck: {
         icon: '📊',
         title: '运势解读'
+      },
+      favorableElements: {
+        title: '喜用神'
+      },
+      celebrities: {
+        title: '同频名人',
+        international: '国外',
+        domestic: '国内'
       },
       luckSuggestion: {
         icon: '✨',
         title: '开运建议',
         color: '开运颜色',
         location: '开运方位',
-        career: '适合职业',
         tips: '开运tips'
       }
     }
